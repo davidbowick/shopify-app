@@ -19,28 +19,28 @@
             <a id="clear-results" href="#" class="btn btn-primary" style="display: none;">Clear Results</a>
         </div>
     </form>
-    <div class="grid flex">
-        <div class="grid__item one-half product-list__hidden nopacity">
-            @if ($products)
-            {{-- {{ dd($products) }} --}}
-            @foreach ($products as $product)
-            <div data-id="{{$product->node->id}}">
-                <h4>{{$product->node->title}}</h4>
-                <ul>
-                    {{-- {{ dd($product->node->variants->edges)}} --}}
-                    @foreach($product->node->variants->edges as $variant)
-                    <li>
-                        <a href="#" data-variant-id="{{$variant->node->id}}">{{$variant->node->displayName}}</a>
-                    </li>            
-                    @endforeach
-                </ul>
-            </div>
-            @endforeach
-            @endif
+    <div class="grid flex relative">
+        <div class="main-preloader" style="display: none;">
+            <svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" stroke-width="10" r="25" stroke-dasharray="117.80972450961724 41.269908169872416" transform="rotate(41.2639 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
         </div>
-        <form class="grid__item one-half" id="create-draft-order" action="/draft-order" method="POST" style="display: none;">
+        <div class="grid__item one-half product-list__hidden box nopacity">
+           
+        </div>
+        <div id="right-column" class="grid__item one-half" >
+            {{-- <a href="#" class="btn--add-customer">Add Customer?</a> --}}
+            <form id="addCustomerForm" method="GET" action="/customer" class="box relative">
+                <div class="field relative">
+                    <input class="add-customer-form__input" type="text" name="query" placeholder="Add a customer? (Type to search)" value="" >
+                    <div class="add-customer-form__results box" style="display: none;"></div>
+                </div>
+            </form>
+            <div id="current-customer" class="box" style="display: none;">
+                <h4>Customer</h4>
+            </div>
+        <form id="create-draft-order" action="/draft-order" method="POST" style="display: none;">
             @csrf
-            <div class="draft-order__saved-products">
+            <div class="draft-order__saved-products box">
+                <h4>Products</h4>
                 
             </div>
             <div class="text-center"><button id="createDraftOrder" type="submit" class="btn btn-primary">Create Draft Order</button></div>
@@ -52,9 +52,7 @@
         </form>
     </div>
 </div>
-<div class="main-preloader" style="display: none;">
-    <svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" stroke-width="10" r="25" stroke-dasharray="117.80972450961724 41.269908169872416" transform="rotate(41.2639 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
-</div>
+
     @endsection
 
     @section('scripts')

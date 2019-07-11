@@ -198,6 +198,8 @@ $(function () {
       CURRENT_QUERY = '',
       FIELD = '#add-product';
   $(FIELD).focus();
+  /* Find Products */
+
   $(FIELD).keyup(debounce(function () {
     var keyword = $(this).val();
 
@@ -229,10 +231,10 @@ $(function () {
 
             $('.product-list__hidden').append(obj);
             $(p.node.variants.edges).each(function (i, v) {
-              console.log(v);
-              var vTitle = v.node.displayName,
+              // console.log(v);
+              var vTitle = v.node.title,
                   vId = v.node.id;
-              $(select).append('<option data-image="' + imageSrc + '" data-title="' + vTitle + '" data-variant-id="' + vId + '" value="' + vId + '">' + vTitle.split(' - ')[2] + '</option>'); // $(ul).append('<li><a class="product-list__link" href="#" data-image="'+imageSrc+'" data-title="'+vTitle+'" data-variant-id="'+vId+'">'+vTitle+'</a></li>');
+              $(select).append('<option data-image="' + imageSrc + '" data-product-title="' + $title + '" data-variant-title="' + vTitle + '" data-variant-id="' + vId + '" value="' + vId + '">' + vTitle + '</option>'); // $(ul).append('<li><a class="product-list__link" href="#" data-image="'+imageSrc+'" data-title="'+vTitle+'" data-variant-id="'+vId+'">'+vTitle+'</a></li>');
             });
             $(select).wrap('<div class="field"/>');
             var addBtn = $('<a href="#" class="product-list__add btn">Add</a>').appendTo(details);
@@ -246,30 +248,32 @@ $(function () {
       });
     }
   }, 250));
+  /* on Product list add click */
+
   $(document).on('click', '.product-list__add', function (e) {
     e.preventDefault();
     var $this = $(this),
         $parent = $this.closest('.product-list__product'),
         $select = $parent.find('.variant-list__variants option:selected'),
         $id = $select.data('variant-id').split('/').pop(),
-        $title = $select.data('title'),
+        $title = $select.data('product-title'),
+        $variantTitle = $select.data('variant-title'),
         $image = $select.data('image'),
         $savedProducts = '.draft-order__saved-products',
         $specialInputs = $parent.find('.special__input'),
-        $special = 'Joy'; // console.log($id,$title);
+        $special = 'Joy';
+    console.log($id, $title); // var titleSplit = $title.split(' - ');
 
-    var titleSplit = $title.split(' - ');
     var obj = $('<div class="draft-order__saved-product flex" style="display: none;"></div>').appendTo($savedProducts);
     var img = $('<div class="draft-order__image"><img src="' + $image + '"></div>').appendTo(obj);
     var desc = $('<div class="draft-order__description"></div>').appendTo(obj);
-    var title = $('<div class="draft-order__title"><h5>' + titleSplit[0] + '</h5></div>').appendTo(desc);
+    var title = $('<div class="draft-order__title"><h5>' + $title + '</h5></div>').appendTo(desc);
+    var variantTItle = $('<b>' + $variantTitle + '</b>').appendTo(title);
     var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(desc);
     var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(inputs);
-    var hiddenInput = $('<input type="hidden" value="' + $id + '" class="variant-id" name="variant_id[]">').appendTo(inputs);
-
-    if (titleSplit[1]) {
-      $(title).append('<b>' + titleSplit[2] + '</b>');
-    }
+    var hiddenInput = $('<input type="hidden" value="' + $id + '" class="variant-id" name="variant_id[]">').appendTo(inputs); // if(titleSplit[1]) {
+    // 	$(title).append('<b>'+titleSplit[2]+'</b>');
+    // }
 
     if ($specialInputs.length) {
       var specialArray = [];
@@ -320,24 +324,14 @@ $(function () {
           variantQty = $this.find('.variant-quantity').val(),
           variantColor = $this.find('.color').length ? $this.find('.color').val() : '',
           variantGlass = $this.find('.glass').length ? $this.find('.glass').val() : '',
-          variantSwing = $this.find('.swing').length ? $this.find('.swing').val() : ''; // var output = input.split(/[, ]+/).pop();
-      // obj['draft_order']['line_items'][index]['variant_id'] = 
-      // var obj = {key1: "value1", key2: "value2"};
-      // var pair = {key3: "value3"};
-      // obj = {...obj, ...pair};
-
+          variantSwing = $this.find('.swing').length ? $this.find('.swing').val() : '';
       var $lineItem = {
         "variant_id": parseInt(variantId),
         "quantity": parseInt(variantQty),
         "properties": []
       };
       var $lineItems = obj.draft_order.line_items;
-      $lineItems.push($lineItem); // obj.draft_order.line_items[index].variant_id = parseInt(variantId);
-      // obj.draft_order.line_items[index].quantity = parseInt(variantQty);
-      // obj.draft_order.line_items[index].properties["Jamb"] = variantJamb;
-      // obj.draft_order.line_items[index].properties["Glass"] = variantGlass;
-      // obj.draft_order.line_items[index].properties["Swing"] = variantSwing;
-
+      $lineItems.push($lineItem);
       var props = $lineItem.properties;
 
       if (variantColor) {
@@ -364,20 +358,21 @@ $(function () {
         props.push(properties);
       }
 
-      console.log(props);
+      if ($('#current-customer .user-list__user-info').length) {
+        var customerId = $('#current-customer').data('customer-id');
+        var customerNode = {
+          "id": customerId
+        };
+        obj.draft_order.customer = customerNode;
+        obj.draft_order.use_customer_default_address = true;
+      }
     }); //console.log(obj);
 
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('input[name="_token"]').val()
       }
-    }); // console.log(JSON.parse(obj));
-    // console.log($.parseJSON(obj));
-    // var jsonObj = JSON.stringify(obj);
-    // var result = Object.keys(obj).map(function(key) {
-    // 	return [Number(key), obj[key]];
-    // });
-
+    });
     console.log(obj);
     $.ajax({
       method: "POST",
@@ -389,8 +384,7 @@ $(function () {
       contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify(obj),
       success: function success(data) {
-        console.log('successfully sent!'); //console.log(data);
-
+        console.log('successfully sent!');
         $(createDraftOrderBtn).hide();
         $(createDraftOrderBtn).find('svg').hide();
         var myId = data.body.draft_order.id;
@@ -408,6 +402,57 @@ $(function () {
     $('.product-list__hidden').empty(); // $(this).closest('.draft-order__saved-product').remove();
 
     showHide();
+  });
+  $('#addCustomerForm').submit(function (e) {
+    e.preventDefault();
+    return false;
+  });
+  /* Search for Users */
+
+  $('.add-customer-form__input').keyup(debounce(function () {
+    var keyword = $(this).val();
+
+    if (keyword.length >= MIN_LENGTH && CURRENT_QUERY != keyword) {
+      CURRENT_QUERY = keyword; // $('.main-preloader').fadeIn();
+
+      var customerResults = '.add-customer-form__results';
+      $.ajax({
+        url: APP_DOMAIN + '/customer/' + keyword,
+        success: function success(d) {
+          // console.log(d);
+          $(customerResults).empty();
+          $(d).each(function (i, p) {
+            console.log(p.node.displayName);
+            var $name = p.node.displayName,
+                $id = p.node.id.replace('gid://shopify/Customer/', '');
+            $email = p.node.email, $gravatar = p.node.hash;
+            var obj = $('<div class="user-list__user-wrapper"></div>').appendTo('.add-customer-form__results');
+            var btn = $('<button data-customer-id="' + $id + '" class="user-list__user"></button>').appendTo(obj);
+            var flexwrapper = $('<div class="flex flex--align-center"></div>').appendTo(btn);
+            var imagewrapper = $('<div class="user-list__user-image"><img width="40" src="' + $gravatar + '"></div>').appendTo(flexwrapper);
+            var datawrapper = $('<div data-customer-id="' + $id + '" class="user-list__user-info"></div>').appendTo(flexwrapper);
+            var name = $('<div class="user-list__name">' + $name + '</div>').appendTo(datawrapper);
+            var email = $('<div class="user-list__name">' + $email + '</div>').appendTo(datawrapper);
+            $('.main-preloader').fadeOut();
+          });
+          $(customerResults).fadeIn();
+          showHide();
+        },
+        error: function error(e) {
+          console.log(e);
+        }
+      });
+    }
+  }, 250));
+  $(document).on('click', '.user-list__user', function (e) {
+    e.preventDefault();
+    var $this = $(this),
+        myId = $this.data('customer-id'),
+        myContent = $this.html();
+    $('#addCustomerForm').hide();
+    $('.btn--add-customer').hide();
+    $('.add-customer-form__results').hide().empty();
+    $('#current-customer').append(myContent).fadeIn().attr('data-customer-id', myId);
   });
   showHide();
 });

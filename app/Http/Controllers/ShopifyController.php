@@ -41,16 +41,16 @@ class ShopifyController extends Controller
 				}
 			}
     	}';
-   		$products = [];
+   		// $products = [];
         // $products = $shop->api()->graph($graphQL);
         // $products = $products->body->shop->products->edges;
         // dd($products);
-        return view('welcome',compact('request','shop','products'));
+        return view('welcome',compact('request','shop'));
 
     }
-    public function search($title) {
+    public function searchProducts($title) {
     	$shop = ShopifyApp::shop();
-    	$request_url = '/admin/products.json?title='.$title;
+    	// $request_url = '/admin/products.json?title='.$title;
     	$graphQL = '{
     		shop {
 				products(query:"title:*'.$title.'*" first: 5) {
@@ -68,7 +68,7 @@ class ShopifyController extends Controller
 								edges {
 									node {
 										id
-										displayName
+										title
 									}
 								}
 							}
@@ -81,6 +81,31 @@ class ShopifyController extends Controller
         $products = $shop->api()->graph($graphQL);
         $products = $products->body->shop->products->edges;
     	return $products;
+    }
+    public function searchUsers($query) {;
+    	$shop = ShopifyApp::shop();    	
+    	$graphQL = '{
+    		customers(query:"lastName:*'.$query.'*"  first: 5) {
+    			edges {
+    				node {
+    					id
+    					displayName
+    					email
+    				}
+    			}
+    		}
+    	}';
+       
+        $users = $shop->api()->graph($graphQL);
+        $users = $users->body->customers->edges;
+        $users = json_decode(json_encode($users),true);
+        $i = 0;
+        foreach($users as $user) {
+        	$hash = md5($user['node']['email']);
+        	$users[$i]['node']['hash'] = '//gravatar.com/avatar/'.$hash;
+        	$i++;
+        }
+    	return $users;
     }
     public function storeDraftOrder(Request $request)
     {
