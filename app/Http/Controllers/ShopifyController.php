@@ -84,73 +84,10 @@ class ShopifyController extends Controller
     }
     public function storeDraftOrder(Request $request)
     {
-
-    	$json = $request->json()->all();
-
     	$shop = ShopifyApp::shop();
-    	$variant_id = 12480865468534;
-    	// return $variant_id;
-    	// return json_decode($request);
-    	// dd($request);
-    	// dd(json_encode($request));
-
-    	/*
-    	$result = $shop->api()->graph(
-    		'mutation collectionCreate($input: CollectionInput!) { 
-    			collectionCreate(input: $input) { 
-    				userErrors { 
-    					field message 
-    				} 
-    				collection { 
-    					id 
-    				} 
-    			} 
-    		}',
-    		['input' => ['title' => 'Test Collection']]
-    	);
-		return $result->body->collectionCreate->collection->id; // gid://shopify/Collection/63171592234
-		*/
-		/*
-		$result = $shop->api()->graph(
-    		'mutation draftOrderCreate($input: DraftOrderInput!) { 
-    			draftOrderCreate(input: $input) { 
-    				userErrors { 
-    					field message 
-    				} 
-    				draftOrder { 
-    					id 
-    				} 
-    			} 
-    		}',
-    		[ "input" => [ "lineItems" => [ "variantId" => $variant_id ]]]
-    	);
-    	*/
-
-
-    	/*$params = [
-		  "draft_order" => [
-		    "line_items" => [
-		      [
-		        "variant_id" => $variant_id,
-		        "quantity" => 1
-		      ]
-		    ]
-		  ]
-		];*/
-		// $params = json_decode($request, true);	
-		// return json_encode($request->request);
-
-
-		// return $request->body;
-		// print_r($request);
-		// dd($request);
-		// return json_decode($request);
+    	$json = $request->json()->all();
     	$result = $shop->api()->rest('POST','/admin/api/2019-04/draft_orders.json',$json);
     	return json_encode($result);
-    	// dd($result);
- 
-  
- 
     }
 }
 

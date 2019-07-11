@@ -93,7 +93,8 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var $special = 'Joy';
+var $special = 'Special Order';
+var preloader = $('<svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" ng-attr-r="{{config.radius}}" ng-attr-stroke-dasharray="{{config.dasharray}}" stroke="#ffffff" stroke-width="10" r="25" stroke-dasharray="117.80972450961724 41.269908169872416" transform="rotate(41.2639 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>');
 
 function debounce(func, wait, immediate) {
   var timeout;
@@ -146,10 +147,20 @@ var objectifier = function objectifier(splits, create, context) {
 
 function addSpecialInputs(inputs) {
   /* Jamb */
-  var jambOptions = ['6\"', '4\"', '8\"'];
+
+  /*
+  var jambOptions = ['6\"','4\"','8\"'];
   var jamb = $('<div class="special__input grid__item field"><label>Jamb</label><select class="jamb" name="jamb[]"></select></div>').appendTo(inputs);
-  $.each(jambOptions, function (index, value) {
-    $(jamb).find('select').append('<option value="' + value.replace('"', '\"') + '">' + value + '</option>');
+  $.each(jambOptions,function(index,value) {
+  	$(jamb).find('select').append('<option value="'+value.replace('"','\"')+'">'+value+'</option>');
+  });
+  */
+
+  /* Glass */
+  var colorOptions = ['Oil Rubbed Bronze', 'Heavy Bronze', 'Silver Pewter', 'Black', 'Pewter'];
+  var color = $('<div class="special__input grid__item field"><label>Color</label><select class="color" name="color[]"></select></div>').appendTo(inputs);
+  $.each(colorOptions, function (index, value) {
+    $(color).find('select').append('<option value="' + value.replace('"', '\"') + '">' + value + '</option>');
   });
   /* Glass */
 
@@ -192,6 +203,7 @@ $(function () {
 
     if (keyword.length >= MIN_LENGTH && CURRENT_QUERY != keyword) {
       CURRENT_QUERY = keyword;
+      $('.main-preloader').fadeIn();
       $.ajax({
         url: APP_DOMAIN + '/products/' + keyword,
         success: function success(d) {
@@ -217,13 +229,14 @@ $(function () {
 
             $('.product-list__hidden').append(obj);
             $(p.node.variants.edges).each(function (i, v) {
-              // console.log(v);
+              console.log(v);
               var vTitle = v.node.displayName,
                   vId = v.node.id;
-              $(select).append('<option data-image="' + imageSrc + '" data-title="' + vTitle + '" data-variant-id="' + vId + '" value="' + vId + '">' + vTitle.split(' - ')[1] + '</option>'); // $(ul).append('<li><a class="product-list__link" href="#" data-image="'+imageSrc+'" data-title="'+vTitle+'" data-variant-id="'+vId+'">'+vTitle+'</a></li>');
+              $(select).append('<option data-image="' + imageSrc + '" data-title="' + vTitle + '" data-variant-id="' + vId + '" value="' + vId + '">' + vTitle.split(' - ')[2] + '</option>'); // $(ul).append('<li><a class="product-list__link" href="#" data-image="'+imageSrc+'" data-title="'+vTitle+'" data-variant-id="'+vId+'">'+vTitle+'</a></li>');
             });
             $(select).wrap('<div class="field"/>');
             var addBtn = $('<a href="#" class="product-list__add btn">Add</a>').appendTo(details);
+            $('.main-preloader').fadeOut();
           });
           showHide();
         },
@@ -254,8 +267,8 @@ $(function () {
     var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(inputs);
     var hiddenInput = $('<input type="hidden" value="' + $id + '" class="variant-id" name="variant_id[]">').appendTo(inputs);
 
-    if ($title.indexOf($special) > -1) {
-      $(title).append('<b>' + titleSplit[1] + '</b>');
+    if (titleSplit[1]) {
+      $(title).append('<b>' + titleSplit[2] + '</b>');
     }
 
     if ($specialInputs.length) {
@@ -283,9 +296,12 @@ $(function () {
     e.preventDefault();
     $(this).closest('.draft-order__saved-product').remove();
     showHide();
-  }); // $(document).on('click','')
+  }); //$('#createDraftOrder').append(preloader);
+  // $(document).on('click','')
 
   $('#create-draft-order').submit(function (e) {
+    var createDraftOrderBtn = '#createDraftOrder';
+    $(createDraftOrderBtn).empty().append(preloader);
     e.preventDefault();
     var obj = {
       "draft_order": {
@@ -302,7 +318,7 @@ $(function () {
       var $this = $(this),
           variantId = $this.find('.variant-id').val(),
           variantQty = $this.find('.variant-quantity').val(),
-          variantJamb = $this.find('.jamb').length ? $this.find('.jamb').val() : '',
+          variantColor = $this.find('.color').length ? $this.find('.color').val() : '',
           variantGlass = $this.find('.glass').length ? $this.find('.glass').val() : '',
           variantSwing = $this.find('.swing').length ? $this.find('.swing').val() : ''; // var output = input.split(/[, ]+/).pop();
       // obj['draft_order']['line_items'][index]['variant_id'] = 
@@ -324,10 +340,10 @@ $(function () {
 
       var props = $lineItem.properties;
 
-      if (variantJamb) {
+      if (variantColor) {
         var properties = {
-          "name": "Jamb",
-          "value": variantJamb
+          "name": "Color",
+          "value": variantColor
         };
         props.push(properties);
       }
@@ -373,14 +389,25 @@ $(function () {
       contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify(obj),
       success: function success(data) {
-        console.log('successfully sent!');
-        console.log(data);
+        console.log('successfully sent!'); //console.log(data);
+
+        $(createDraftOrderBtn).hide();
+        $(createDraftOrderBtn).find('svg').hide();
+        var myId = data.body.draft_order.id;
+        var myHref = $('#gotoDraftOrder a').attr('href') + myId;
+        $('#gotoDraftOrder').show().find('a').attr('href', myHref);
       },
       error: function error(data) {
-        console.log('errr, nope');
-        console.log(data);
+        console.log('errr, nope'); // console.log(data);
       }
     });
+  });
+  $(document).on('click', '.btn--start-over', function (e) {
+    e.preventDefault();
+    $('.draft-order__saved-products').empty();
+    $('.product-list__hidden').empty(); // $(this).closest('.draft-order__saved-product').remove();
+
+    showHide();
   });
   showHide();
 });
