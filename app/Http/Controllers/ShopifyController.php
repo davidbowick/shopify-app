@@ -53,7 +53,7 @@ class ShopifyController extends Controller
     	// $request_url = '/admin/products.json?title='.$title;
     	$graphQL = '{
     		shop {
-				products(query:"title:*'.$title.'*" first: 5) {
+				products(query:"title:*'.$title.'*" first: 10) {
 					edges {
 						node {
 							id
@@ -64,7 +64,7 @@ class ShopifyController extends Controller
 								originalSrc
 								transformedSrc(maxWidth: 100)
 							}
-							variants(first: 10) {
+							variants(first: 100) {
 								edges {
 									node {
 										id
