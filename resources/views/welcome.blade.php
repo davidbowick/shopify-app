@@ -68,4 +68,6 @@
         };
         var myTitleBar = TitleBar.create(app, titleBarOptions);
     </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/js/app.js"></script>
     @endsection
