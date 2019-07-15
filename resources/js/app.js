@@ -89,9 +89,7 @@ $(function() {
 	var MIN_LENGTH = 3,
 	CURRENT_QUERY = '',
 	FIELD = '#add-product';
-
 	$(FIELD).focus();
-
 	/* Find Products */
 	$(FIELD).keyup(debounce(function(){
 		var keyword = $(this).val();
@@ -209,7 +207,6 @@ $(function() {
 				"line_items": []
 			}
 		};
-	
 		// var obj = [];
 		var totalSaved =  $('.draft-order__saved-product').length;
 		$('.draft-order__saved-product').each(function(index,value) {

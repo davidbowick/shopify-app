@@ -45,7 +45,7 @@
             </div>
             <div class="text-center"><button id="createDraftOrder" type="submit" class="btn btn-primary">Create Draft Order</button></div>
             <div id="gotoDraftOrder" class="text-center" style="display: none">
-                <a href="/admin/draft_orders/" target="_blank" class="btn btn-primary">Rad, click here to go see it!</a>
+                <a href="https://{{$shop->shopify_domain}}/admin/draft_orders/" target="_blank" class="btn btn-primary">Rad, click here to go see it!</a>
                 <hr class="hr--invisible">
                 <a href="#" class="btn--start-over">Start Over?</a>
             </div>
