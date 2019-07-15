@@ -1,6 +1,6 @@
 var $special = 'Special Order';
 var preloader = $('<svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" ng-attr-r="{{config.radius}}" ng-attr-stroke-dasharray="{{config.dasharray}}" stroke="#ffffff" stroke-width="10" r="25" stroke-dasharray="117.80972450961724 41.269908169872416" transform="rotate(41.2639 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>');
-
+var DEBOUNCE_TIME = 500;
 function debounce(func, wait, immediate) {
 	var timeout;
 	return function() {
@@ -141,7 +141,7 @@ $(function() {
 				}
 			});
 		}
-	},250));
+	},DEBOUNCE_TIME));
 
 	/* on Product list add click */
 	$(document).on('click','.product-list__add',function(e){
@@ -164,13 +164,10 @@ $(function() {
 		var img = $('<div class="draft-order__image"><img src="'+$image+'"></div>').appendTo(obj);
 		var desc = $('<div class="draft-order__description"></div>').appendTo(obj);
 		var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(desc);
-		var variantTItle = $('<b>'+$variantTitle+'</b>').appendTo(title);
+		var variantTItle = $('<div>'+$variantTitle+'</div>').appendTo(title);
 		var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(desc);
 		var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(inputs);
 		var hiddenInput = $('<input type="hidden" value="'+$id+'" class="variant-id" name="variant_id[]">').appendTo(inputs);
-		// if(titleSplit[1]) {
-		// 	$(title).append('<b>'+titleSplit[2]+'</b>');
-		// }
 		if($specialInputs.length) {
 			var specialArray = [];
 			$specialInputs.each(function(index,value) {
@@ -344,7 +341,7 @@ $(function() {
 				}
 			});
 		}
-	},250));
+	},DEBOUNCE_TIME));
 
 	$(document).on('click','.user-list__user',function(e){
 		e.preventDefault();

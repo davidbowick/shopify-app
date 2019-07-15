@@ -10,7 +10,7 @@
     {{-- <hr/> --}}
     <h3>Type to search products</h3>
     {{-- <a href="/products/Brie">/products/Brie</a> --}}
-    <form id="add-product__form" action="/products" method="GET">
+    <form id="add-product__form" action="/products" method="GET" autocomplete="off" class="box">
         @csrf
         <div class="field flex">
             <label for="add-product" class="visually-hidden">Add a product</label>
@@ -28,7 +28,7 @@
         </div>
         <div id="right-column" class="grid__item one-half" >
             {{-- <a href="#" class="btn--add-customer">Add Customer?</a> --}}
-            <form id="addCustomerForm" method="GET" action="/customer" class="box relative">
+            <form id="addCustomerForm" method="GET" action="/customer" class="box relative" autocomplete="off">
                 <div class="field relative">
                     <input class="add-customer-form__input" type="text" name="query" placeholder="Add a customer? (Type to search)" value="" >
                     <div class="add-customer-form__results box" style="display: none;"></div>
