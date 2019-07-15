@@ -28,7 +28,7 @@ class ShopifyController extends Controller
 								id
 								originalSrc
 							}
-							variants(first: 10) {
+							variants(first: 100) {
 								edges {
 									node {
 										id
