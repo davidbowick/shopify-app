@@ -83,7 +83,7 @@ jQuery.obj = function(name, value, create, context) {
 		return objectifier(name.split("."), create, context);
 	}
 };
-var APP_DOMAIN = 'https://draftorders.wick-apps.com',
+var APP_DOMAIN = 'https://draftorders.wick-apps.com';
 // SHOP_DOMAIN = '//ard-dev.myshopify.com';
 $(function() {
 	var MIN_LENGTH = 3,
