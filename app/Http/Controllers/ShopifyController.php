@@ -18,7 +18,7 @@ class ShopifyController extends Controller
         $title = 'Joy';
         $graphQL = '{
     		shop {
-				products(query:"title:*'.$title.'*" first: 5) {
+				products(query:"title:*'.$title.'*" first: 10) {
 					edges {
 						node {
 							id
