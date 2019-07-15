@@ -104,7 +104,7 @@ $(function() {
 					// console.log(d);
 					$('.product-list__hidden').empty();
 					$(d).each(function(i,p) {
-						// console.log(d);
+						console.log(p);
 						var $title = p.node.title,
 							id = p.node.id,
 							handle = p.node.handle,
