@@ -11444,6 +11444,14 @@ select {
   margin-top: 10px;
 }
 
+.customer-form__loader {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  display: none;
+  stroke: #000;
+}
+
 .user-list__user {
   width: 100%;
   padding: 0;

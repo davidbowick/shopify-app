@@ -17,4 +17,5 @@ Route::get('/customer/{query}','ShopifyController@searchUsers')->middleware(['au
 Route::get('/', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
 // Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
 Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
+// Route::get('/variants','ShopifyController@grabProductVariants')->middleware(['auth.shop'])->name('home');
 

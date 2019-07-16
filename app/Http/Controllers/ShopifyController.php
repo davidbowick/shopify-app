@@ -72,6 +72,9 @@ class ShopifyController extends Controller
 									}
 								}
 							}
+                            options {
+                                name
+                            }
 						}
 					}
 				}
@@ -113,6 +116,9 @@ class ShopifyController extends Controller
     	$json = $request->json()->all();
     	$result = $shop->api()->rest('POST','/admin/api/2019-04/draft_orders.json',$json);
     	return json_encode($result);
+    }
+    public function grabProductVariants(Request $request) {
+        
     }
 }
 
