@@ -295,7 +295,9 @@ $(function() {
 
 	$(document).on('click','.draft-order__remove',function(e) {
 		e.preventDefault();
-		$(this).closest('.draft-order__saved-product').remove();
+		$(this).closest('.draft-order__saved-product').fadeOut('fast',function() {
+			$(this).remove();
+		});
 		showHide();
 	});
 	//$('#createDraftOrder').append(preloader);
@@ -399,6 +401,8 @@ $(function() {
 		e.preventDefault();
 		$('.draft-order__saved-products').empty();
 		$('.product-list__hidden').empty();
+		removeCustomer();
+		$('#add-product').val('').focus();
 		// $(this).closest('.draft-order__saved-product').remove();
 		showHide();
 	});
@@ -428,9 +432,9 @@ $(function() {
 							$email = p.node.email,
 							$gravatar = p.node.hash;
 
-						var obj = $('<div class="user-list__user-wrapper"></div>').appendTo('.add-customer-form__results');
+						var obj = $('<div class="user-list__user-wrapper"></div>').appendTo(customerResults);
 						var btn = $('<button data-customer-id="'+$id+'" class="user-list__user"></button>').appendTo(obj);
-						var flexwrapper = $('<div class="flex flex--align-center"></div>').appendTo(btn);
+						var flexwrapper = $('<div class="relative flex flex--align-center"></div>').appendTo(btn);
 						var imagewrapper = $('<div class="user-list__user-image"><img width="40" src="'+$gravatar+'"></div>').appendTo(flexwrapper);
 						var datawrapper = $('<div data-customer-id="'+$id+'" class="user-list__user-info"></div>').appendTo(flexwrapper);
 						var name = $('<div class="user-list__name">'+$name+'</div>').appendTo(datawrapper);
@@ -438,6 +442,7 @@ $(function() {
 						$(spinner).fadeOut();
 					});
 					$(customerResults).fadeIn();
+					CURRENT_QUERY = '';
 
 					showHide();
 				},
@@ -457,9 +462,18 @@ $(function() {
 		$('.btn--add-customer').hide();
 		$('.add-customer-form__results').hide().empty();
 		$('#current-customer').append(myContent).fadeIn().attr('data-customer-id',myId);
+		$('#current-customer .flex').append('<a href="#" class="current-customer__close">&times;</a>');
 		
 	});
-	
+	$(document).on('click','.current-customer__close',function(e) {
+		e.preventDefault();
+		removeCustomer();
+	});
+	function removeCustomer() {
+		$('#current-customer > .flex').remove();
+		$('#current-customer').hide();
+		$('#addCustomerForm').show().find('input').val('').focus();
+	}
 	showHide();
 });
 
