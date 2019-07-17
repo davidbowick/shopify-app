@@ -19,4 +19,4 @@ Route::get('/', 'ShopifyController@index')->middleware(['auth.shop','billable'])
 Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
 // Route::get('/variants','ShopifyController@grabProductVariants')->middleware(['auth.shop'])->name('home');
 
-Route::get('/pull','GitController@pull');
+Route::post('/pull','GitController@pull');
