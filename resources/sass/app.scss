@@ -379,3 +379,15 @@ select {
 .one-whole {
 	width: 100%;
 }
+
+@media screen and (max-width: 600px) {
+	.small--flex-wrap {
+		@include flex-wrap(wrap);
+	}
+	.small--one-whole {
+		width: 100%;
+	}		
+	#right-column {
+		min-width: 0;
+	}
+}

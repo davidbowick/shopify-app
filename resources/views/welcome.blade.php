@@ -16,17 +16,17 @@
             <label for="add-product" class="visually-hidden">Add a product</label>
             <input id="add-product" type="text" name="product" placeholder="Type to search">
             {{-- <button class="btn btn-primary" type="submit">Add Product</button> --}}
-            <a id="clear-results" href="#" class="btn btn-primary" style="display: none;">Clear Results</a>
+            <a id="clear-results" href="#" class="btn btn-primary" style="display: none;">Clear</a>
         </div>
     </form>
-    <div class="grid flex relative">
+    <div class="grid flex relative small--flex-wrap">
         <div class="main-preloader" style="display: none;">
             <svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" stroke-width="10" r="25" stroke-dasharray="117.80972450961724 41.269908169872416" transform="rotate(41.2639 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
         </div>
         <div class="grid__item one-whole product-list__hidden box nopacity">
            
         </div>
-        <div id="right-column" class="grid__item" >
+        <div id="right-column" class="grid__item small--one-whole" >
             {{-- <a href="#" class="btn--add-customer">Add Customer?</a> --}}
             <form id="addCustomerForm" method="GET" action="/customer" class="box relative" autocomplete="off">
                 <div class="field relative">
