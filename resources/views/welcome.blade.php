@@ -1,7 +1,7 @@
 @extends('shopify-app::layouts.default')
 
 @section('styles')
-<link rel="stylesheet" href="/css/app.css" >
+<link rel="stylesheet" href="{{ mix('/css/app.css') }}" >
 @endsection 
 
 @section('content')
@@ -70,5 +70,5 @@
         var myTitleBar = TitleBar.create(app, titleBarOptions);
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="{{ mix('/js/app.css') }}"></script>
     @endsection
