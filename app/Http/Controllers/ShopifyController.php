@@ -82,6 +82,7 @@ class ShopifyController extends Controller
     	}';
        
         $products = $shop->api()->graph($graphQL);
+        // return json_encode($products);
         $products = $products->body->shop->products->edges;
     	return $products;
     }

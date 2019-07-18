@@ -146,7 +146,7 @@ function checkSelects(me) {
 	obj.find('option').filter(function() {
 		return $(this).text() === mySelectedValues;
 	}).prop('selected',true)
-	console.log(mySelectedValues);
+	// console.log(mySelectedValues);
 }
 
 // SHOP_DOMAIN = '//ard-dev.myshopify.com';
@@ -260,7 +260,7 @@ $(function() {
 			$specialInputs = $parent.find('.special__input'),
 			$special = 'Joy';
 
-		console.log($id,$title);
+		// console.log($id,$title);
 		// var titleSplit = $title.split(' - ');
 
 		var obj = $('<div class="draft-order__saved-product flex" style="display: none;"></div>').appendTo($savedProducts);
@@ -374,7 +374,7 @@ $(function() {
 				'X-CSRF-TOKEN': $('input[name="_token"]').val()
 			}
 		});
-		console.log(obj);
+		// console.log(obj);
 		$.ajax({
 			method:"POST",
 			headers: {'X-CSRF-TOKEN': $('input[name="_token"]').val()},
@@ -426,7 +426,7 @@ $(function() {
 					// console.log(d);
 					$(customerResults).empty();
 					$(d).each(function(i,p) {
-						console.log(p.node.displayName);
+						// console.log(p.node.displayName);
 						var $name = p.node.displayName,
 							$id = p.node.id.replace('gid://shopify/Customer/','')
 							$email = p.node.email,
