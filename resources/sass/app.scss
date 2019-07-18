@@ -90,6 +90,13 @@ textarea
 	font-size: $font-size-base;
 	font-family: $font-family-sans-serif;
 	padding: 8px;
+	outline: none;
+	@include transition();
+	&:focus {
+		border-width: 1px;
+		box-shadow: 0 0 3px #5c6ac4;
+		border-color: #5c6ac4;
+	}
 }
 input[type=number] {
 	border: 1px solid #dfdfdf;

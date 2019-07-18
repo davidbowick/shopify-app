@@ -13,39 +13,39 @@ class ShopifyController extends Controller
   
         $shop = ShopifyApp::shop();
         // Log::info('This is the Shop Object: '.print_r($shop,true));
-        $request = $shop->api()->rest('GET','/admin/shop.json');
+        // $request = $shop->api()->rest('GET','/admin/shop.json');
         // $products = $shop->api()->rest('GET','/admin/products.json')->body->products;
         $title = 'Joy';
-        $graphQL = '{
-    		shop {
-				products(query:"title:*'.$title.'*" first: 10) {
-					edges {
-						node {
-							id
-							title
-							handle
-							featuredImage {
-								id
-								originalSrc
-							}
-							variants(first: 100) {
-								edges {
-									node {
-										id
-										displayName
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-    	}';
+   //      $graphQL = '{
+   //  		shop {
+			// 	products(query:"title:*'.$title.'*" first: 10) {
+			// 		edges {
+			// 			node {
+			// 				id
+			// 				title
+			// 				handle
+			// 				featuredImage {
+			// 					id
+			// 					originalSrc
+			// 				}
+			// 				variants(first: 100) {
+			// 					edges {
+			// 						node {
+			// 							id
+			// 							displayName
+			// 						}
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
+   //  	}';
    		// $products = [];
         // $products = $shop->api()->graph($graphQL);
         // $products = $products->body->shop->products->edges;
         // dd($products);
-        return view('welcome',compact('request','shop'));
+        return view('welcome',compact('shop'));
 
     }
     public function searchProducts($title) {
@@ -99,7 +99,6 @@ class ShopifyController extends Controller
     			}
     		}
     	}';
-       
         $users = $shop->api()->graph($graphQL);
         $users = $users->body->customers->edges;
         $users = json_decode(json_encode($users),true);
