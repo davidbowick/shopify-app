@@ -151,6 +151,16 @@ function checkSelects(me) {
 
 // SHOP_DOMAIN = '//ard-dev.myshopify.com';
 $(function() {
+	// Disable form submission
+	$('#add-product__form').submit(function(e){
+		e.preventDefault();
+		// return false;
+	});
+	$('#addCustomerForm').submit(function(e){
+		e.preventDefault();
+		// return false;
+	});
+	// alert('not cached');
 	var MIN_LENGTH = 3,
 	CURRENT_QUERY = '',
 	FIELD = '#add-product';
