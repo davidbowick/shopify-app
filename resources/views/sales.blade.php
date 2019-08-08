@@ -11,10 +11,12 @@
     @php
     $formatter = new NumberFormatter('en_US',  NumberFormatter::CURRENCY);
     $total = 0;
-    foreach($sales as $order) {
-    	if($order->node->fullyPaid) {
-    		$total += $order->node->totalPriceSet->shopMoney->amount;	
-    	}
+    if($sales) {
+        foreach($sales as $order) {
+           if($order->node->fullyPaid) {
+              $total += $order->node->totalPriceSet->shopMoney->amount;	
+          }
+      }
     }
     @endphp
     <div class="flex flex--justify-space-between flex--align-center">
@@ -43,6 +45,7 @@
     			<b>Total</b>
     		</div>
     	</div>
+        @if ($sales)
     	@foreach ($sales as $order)
     	<div class="order-row even-columns">
     		{{-- {{ json_encode($order) }} --}}
@@ -79,6 +82,7 @@
 
     	</div>
     	@endforeach
+        @endif
     </div>
 </div>
 @endsection
