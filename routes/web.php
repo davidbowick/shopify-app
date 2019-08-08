@@ -24,7 +24,7 @@ Route::post('/draft-order/{id}/send-invoice','ShopifyController@sendInvoice')->m
 // Route::get('/variants','ShopifyController@grabProductVariants')->middleware(['auth.shop'])->name('home');
 
 Route::post('/pull','GitController@pull');
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => 'auth.shop'], function () {
     Auth::routes();
 });
 // Route::get('/logout','\App\Http\Controllers\Auth\LoginController@logout');
