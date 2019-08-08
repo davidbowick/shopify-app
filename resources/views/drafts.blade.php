@@ -69,13 +69,11 @@
                     ''
                 !!}
 			</div>
-
 			<div class="order__total even-column">
 				<div class="payment-status">
 					{{ $formatter->formatCurrency($order->node->totalPrice, 'USD') }}
 				</div>
 			</div>
-
     	</div>
         @endif
     	@endforeach
