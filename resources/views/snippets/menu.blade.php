@@ -21,20 +21,20 @@
 				<img src="//www.gravatar.com/avatar/{{ md5( strtolower( trim( Auth::user()->email ) ) ) }}?s=30">
 				<span>{{ explode(' ',Auth::user()->name)[0] }}</span>
 
-				<div class="logged-in-user__dropdown">
+				{{-- <div class="logged-in-user__dropdown">
 					<span class="triangle">▲</span>
 					<ul class="box">
 						<li><a href="/">My Sales</a></li>
 						<li><a href="/drafts">My Draft Orders</a></li>
 						<li><a href="/new">New Draft Order</a></li>
 						<li>
-							<form id="form-logout" action="{{ route('logout') }}" method="POST">
+							<form id="form-logout" action="/admin/logout" method="POST">
 								@csrf
 								<button type="submit">Log Out</button>
 							</form>
 						</li>
 					</ul>
-				</div>
+				</div> --}}
 			</div>
 		</div>
 		@endif

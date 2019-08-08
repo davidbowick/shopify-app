@@ -14,21 +14,30 @@ class ShopifyController extends Controller
     public function __construct()
     {
         $shop = ShopifyApp::shop(); 
-        $this->middleware('auth');
+        if(!$shop) {
+            return redirect('/login');
+        } 
+        // $this->middleware('shop.auth');
     }
 
     public function index() {
         $shop = ShopifyApp::shop();
+        if(!$shop) {
+            return redirect('/login');
+        }
         $salesteam = User::all();
         return view('welcome',compact('shop','salesteam'));
     }
     public function sales() {
         $shop = ShopifyApp::shop();
+        if(!$shop) {
+            return redirect('/login');
+        }
         $salesteam = User::all();
         $user =  Auth::user() ? Auth::user() : false;
-        // Salesperson:David Bowick
-        // orders(first:250 , query:"tag:'test'"){
-        // orders(first:50 , query:"tag:\'Salesperson:'.Auth::user()->name.'\'") {
+        if(!$user) {
+            return redirect('/admin/login');
+        }
         $graphQL = '{
             orders(first:250, query:"status:any fulfillment_status:any tag:\'Salesperson:'.Auth::user()->name.'\'") {
                 edges {
@@ -62,8 +71,14 @@ class ShopifyController extends Controller
     }
     public function drafts() {
         $shop = ShopifyApp::shop();
+        if(!$shop) {
+            return redirect('/login');
+        }
         $salesteam = User::all();
         $user =  Auth::user() ? Auth::user() : false;
+        if(!$user) {
+            return redirect('/admin/login');
+        }
         $graphQL = '{
             draftOrders(first:250, query:"tag:\'Salesperson:'.Auth::user()->name.'\'", reverse: true) {
                 edges {
@@ -90,6 +105,9 @@ class ShopifyController extends Controller
     }
     public function searchProducts($title) {
     	$shop = ShopifyApp::shop();
+        if(!$shop) {
+            return redirect('/login');
+        }
     	// $request_url = '/admin/products.json?title='.$title;
     	$graphQL = '{
     		shop {
