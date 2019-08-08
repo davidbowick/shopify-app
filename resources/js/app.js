@@ -680,6 +680,7 @@ $(function() {
 
 	$(document).on('click','.add-custom-product',function(e) {
 		e.preventDefault();
+		$('.product-list__hidden').hide().empty();
 		$('.custom-product__build').fadeIn();
 	});
 

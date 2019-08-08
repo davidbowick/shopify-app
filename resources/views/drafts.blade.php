@@ -35,6 +35,7 @@
     		</div>
     	</div>
     	@foreach ($drafts as $order)
+        @if ($order->node->status != 'COMPLETED')
     	<div class="order-row even-columns">
 			<div class="order__id even-column">
 				@php 
@@ -76,6 +77,7 @@
 			</div>
 
     	</div>
+        @endif
     	@endforeach
     </div>
 </div>
