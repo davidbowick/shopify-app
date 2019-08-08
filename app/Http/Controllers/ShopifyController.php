@@ -56,7 +56,7 @@ class ShopifyController extends Controller
         }';
 
         $sales = $shop->api()->graph($graphQL);
-        // dd($sales);
+        dd($sales);
         $sales = $sales->body->orders->edges;
         return view('sales',compact('shop','salesteam','user','sales'));
     }
@@ -64,9 +64,6 @@ class ShopifyController extends Controller
         $shop = ShopifyApp::shop();
         $salesteam = User::all();
         $user =  Auth::user() ? Auth::user() : false;
-        // Salesperson:David Bowick
-        // orders(first:250 , query:"tag:'test'"){
-        // orders(first:50 , query:"tag:\'Salesperson:'.Auth::user()->name.'\'") {
         $graphQL = '{
             draftOrders(first:250, query:"tag:\'Salesperson:'.Auth::user()->name.'\'", reverse: true) {
                 edges {
