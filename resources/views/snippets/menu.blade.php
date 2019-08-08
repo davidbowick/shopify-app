@@ -21,7 +21,7 @@
 				<img src="//www.gravatar.com/avatar/{{ md5( strtolower( trim( Auth::user()->email ) ) ) }}?s=30">
 				<span>{{ explode(' ',Auth::user()->name)[0] }}</span>
 
-				{{-- <div class="logged-in-user__dropdown">
+				<div class="logged-in-user__dropdown">
 					<span class="triangle">▲</span>
 					<ul class="box">
 						<li><a href="/">My Sales</a></li>
@@ -34,7 +34,7 @@
 							</form>
 						</li>
 					</ul>
-				</div> --}}
+				</div>
 			</div>
 		</div>
 		@endif
