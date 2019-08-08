@@ -56,7 +56,7 @@ class ShopifyController extends Controller
         }';
 
         $sales = $shop->api()->graph($graphQL);
-        dd($sales);
+        // dd($sales);
         $sales = $sales->body->orders->edges;
         return view('sales',compact('shop','salesteam','user','sales'));
     }
