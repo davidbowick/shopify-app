@@ -8,6 +8,22 @@ String.prototype.replaceAll = function(search,replacement) {
 	var target = this;
 	return target.replace(new RegExp(search,'g'), replacement);
 }
+
+function slugify(str) {
+    str = str.replace(/^\s+|\s+$/g, '').toLowerCase(); // trim
+    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+        .replace(/\s+/g, '-') // collapse whitespace and replace by -
+        .replace(/-+/g, '-'); // collapse dashes
+    return str;
+}
+function formatCurrency(number) {
+    if(number == "") return;
+    number = parseFloat(number).toFixed(2);
+    var n = number.split('').reverse().join("");
+    console.log(n);
+    var n2 = n.replace(/\d\d\d(?!$)/g, "$&,");    
+    return '$' + n2.split('').reverse().join('');
+}
 function debounce(func, wait, immediate) {
 	var timeout;
 	return function() {
@@ -24,14 +40,14 @@ function debounce(func, wait, immediate) {
 };
 function showHide() {
 	var draftOrders = '#create-draft-order',
-	draftOrderProduct = '.draft-order__saved-product',
+	draftOrderProduct = '.draft-order__item',
 	productListItem = '.product-list__product',
 	clearButton = '#clear-results',
 	productList = '.product-list__hidden';
 
 	$(draftOrderProduct).length ? fadeIn(draftOrders) : fadeOut(draftOrders);
 	$(productListItem).length ? fadeIn(clearButton) : fadeOut(clearButton);
-	$(productListItem).length ? $(productList).removeClass('nopacity') : $(productList).addClass('nopacity');
+	$(productListItem).length ? fadeIn(productList) : fadeOut(productList);
 }
 function fadeIn(obj) {
 	$(obj).fadeIn();
@@ -175,22 +191,23 @@ $(function() {
 			$.ajax({
 				url: APP_DOMAIN + '/products/'+keyword,
 				success: function(d) {
-					// console.log(d);
 					$('.product-list__hidden').empty();
-					$(d).each(function(i,p) {
+					if(d.length) {
+						$('.no-results').hide();
+						$(d).each(function(i,p) {
 						// console.log(d.options);
 						var $title = p.node.title,
-							id = p.node.id,
-							handle = p.node.handle,
+						id = p.node.id,
+						handle = p.node.handle,
 							// options = d.node.options,
 							imageSrc = p.node.featuredImage.transformedSrc;
 
-						var obj = $('<div class="product-list__product flex"></div>');
-						var image = $('<div class="product-list__image"><img src="'+imageSrc+'" width="90" /></div>').appendTo(obj);
-						var details = $('<div class="product-list__details"></div></div>').appendTo(obj);
-						var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(details);
-						var select = $('<select class="variant-list__variants" style="display: none;"></select>').appendTo(details);
-						var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(details);
+							var obj = $('<div class="product-list__product flex"></div>');
+							var image = $('<div class="product-list__image"><img src="'+imageSrc+'" width="90" /></div>').appendTo(obj);
+							var details = $('<div class="product-list__details"></div></div>').appendTo(obj);
+							var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(details);
+							var select = $('<select class="variant-list__variants" style="display: none;"></select>').appendTo(details);
+							var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(details);
 						// var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(details);
 						// console.log(d.node.options);
 						$(p.node.options).each(function(i,o){
@@ -213,7 +230,7 @@ $(function() {
 						$(p.node.variants.edges).each(function(i,v) {
 							// console.log(v);
 							var vTitle = v.node.title,
-								vId = v.node.id;
+							vId = v.node.id;
 							$(select).append('<option data-image="'+imageSrc+'" data-product-title="'+$title+'" data-variant-title="'+vTitle.replaceAll('"','˝')+'" data-variant-id="'+vId+'" value="'+vId+'">'+vTitle+'</option>');	
 							var titleSplit = vTitle.split(' / ');
 							$(titleSplit).each(function(i,vo) {
@@ -237,12 +254,16 @@ $(function() {
 						$('.main-preloader').fadeOut();
 					});
 					// If Size is selected, then enable/disable the other values.
-					// $('.option-0').on('change',function() {
 					$('.regular__input select').on('change',function() {
 						checkSelects($(this));
 					});
 					$('.option-0').trigger('change');
 					showHide();
+					} else {
+						$('.main-preloader').fadeOut();
+						$('.product-list__hidden').hide();
+						$('.no-results').fadeIn();
+					}
 				},
 				error: function(e) {
 					console.log(e);
@@ -251,9 +272,152 @@ $(function() {
 		}
 	},DEBOUNCE_TIME));
 
+
+	$('#custom-height,#custom-width').keyup(debounce(function(){
+		var keyword = $(this).val();
+		if($('#custom-height').val() && $('#custom-width').val()) {
+			$('.calculate--square-footage').trigger('click');
+		}
+	}));
+
+	var customFormElements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Extended Price','Base Price'];
+
 	if(DEV_MODE) {
 		$(FIELD).val('beverly flat').keyup();	
 	}
+
+	if($('.custom-product__grid').hasClass('dev')) {
+		$('#custom-reference').val('Cool Title, Bro');
+		$('#custom-style').val('Custom Style Value');
+		$('#custom-room').val('Custom Room Value');
+		$('#custom-location').val('Custom Location Value');
+		$('#custom-description').val('Custom Description Value');
+		$('#custom-construction').val('Custom Construction Value');
+		$('#custom-qty').val(1);
+		$('#custom-width').val(61);
+		$('#custom-height').val(81);
+		$('#custom-extended-price').val(3567.00);
+		$('#custom-base-price').val(170);
+		$('#custom-weight').val(2000);
+		$('#custom-jamb').val('6˝');
+		$('#custom-glass').val('Low-e');
+		$('#custom-color').val('Brushed Steel');
+		$('.calculate--square-footage').trigger('click');
+	}
+	$('#custom-qty').val(1);
+	$('#custom-base-price').val(170.00);
+
+	$('#custom-base-price').addClass('money-input');
+	$('#custom-extended-price').addClass('money-input');
+
+	$(document).on('blur','.money-input',function() {
+		if($(this).val() == '') return;
+		var valToFixed = parseInt($(this).val()).toFixed(2);
+		$(this).attr('data-price-value',$(this).val());
+
+		$(this).val(valToFixed);
+		//$(this).val(formatCurrency($(this).val().replace(/[,$]/g,'')));
+	});
+	$(document).on('paste','.money-input',function() {
+		var cb = e.originalEvent.clipboardData || window.clipboardData;      
+    	if(!$.isNumeric(cb.getData('text'))) e.preventDefault();
+	});
+	// $('#custom-base-price').attr('data-price-value',170).val(formatCurrency(170));
+	$('.money-input').blur();
+	
+	// $(document).on('blur')
+	$('#custom-extended-price').on('keyup',function() {
+		if( !$(this).val() ) {
+			$(this).addClass('error');
+		} else {
+			$(this).removeClass('error');
+		}
+	});
+	
+	$(document).on('click','.custom--create-btn',function(e) {
+		e.preventDefault();
+		var $this = $(this),
+			$title = $('#custom-title').val(),
+			currentText = $this.text(),
+			$savedProducts = '.draft-order__saved-products';
+			$info= [],
+			$properties = [];
+
+		if($('#custom-extended-price').val() == '') {
+			$('#custom-extended-price').addClass('error');
+			return false;
+		}
+
+		$this.text('Adding...');
+
+
+		var w = $('#custom-width').val(); 
+		var h = $('#custom-height').val();
+		var qty = parseInt($('#custom-qty').val());
+		var size = w+'˝x'+h+'˝';
+		var squareFootage = $('.custom--square-footage').text().split(' ')[0];
+		$properties.push(size);
+
+		var basePrice = $('#custom-base-price').val();
+		var extendedPrice = $('#custom-extended-price').val();
+		// var priceCurrency = '$'+price+'.00';
+		// Create our number formatter.
+		var formatter = new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: 'USD',
+		});
+
+		var priceCurrency = formatter.format(extendedPrice); /* $2,500.00 */
+		var weight = $('#custom-weight').val();
+
+		var obj = $('<div class="draft-order__item draft-order__custom-product" style="display: none;"></div>').appendTo($savedProducts);
+
+		$.each(customFormElements,function(i,v) {
+			var slug = slugify(v),
+				val = $('#custom-'+slug).val();
+			if(val) {
+				$(obj).attr('data-'+slug,val);
+				$properties.push(val);
+				if(v === 'Glass' || v === 'Swing') {
+					$info.push(val);
+				}
+			}
+			console.log(slug,val);
+		});
+
+		w ? obj.attr('data-width',w) : '';
+		h ? obj.attr('data-height',h) : '';
+		squareFootage ? obj.attr('data-square-footage',squareFootage) : '';
+
+
+
+		//basePrice ? obj.attr('data-base-price',basePrice) : '';
+
+		var title = $('<div class="draft-order__title"><h5>Custom Product</h5></div>').appendTo(obj);
+		// var properties = $('<div class="draft-order__properties"></div>').appendTo(obj);
+		title.append('<span class="draft-order__variant">'+size+' / ' + $info.join(' / ') + '</span>');
+		// var priceWeight = $('<div class="draft-order__priceWeight"></div>').appendTo(obj);
+		// title.append('<br>' + priceCurrency + ' / ' + weight + 'lbs');
+		var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(obj);
+		var qty = $('<div class="grid__item field inline--label"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="'+qty+'"></div>').appendTo(inputs);
+		//var hiddenInput = $('<input type="hidden" value="'+$id+'" class="variant-id" name="variant_id[]">').appendTo(inputs);
+		$('#create-draft-order').fadeIn();
+		var remove = $('<a class="draft-order__remove" href="#">&times;</a>').appendTo(obj);
+		obj.fadeIn();
+		setTimeout(function(){ 
+			$this.text(currentText); 
+		}, 500);
+	});
+
+	$(document).on('click','.custom--clear',function(e) {
+		e.preventDefault();
+		$('.custom-product__grid input').val('');
+		$('.custom--square-footage').html('&nbsp;');
+		$('#custom-glass,#custom-swing').val('TBD');
+		$('#custom-qty').val(1);
+		$('#custom-base-price').val(170);
+	});
+
 	
 
 	/* on Product list add click */
@@ -273,13 +437,13 @@ $(function() {
 		// console.log($id,$title);
 		// var titleSplit = $title.split(' - ');
 
-		var obj = $('<div class="draft-order__saved-product flex" style="display: none;"></div>').appendTo($savedProducts);
+		var obj = $('<div class="draft-order__item draft-order__saved-product flex" style="display: none;"></div>').appendTo($savedProducts);
 		var img = $('<div class="draft-order__image"><img src="'+$image+'"></div>').appendTo(obj);
 		var desc = $('<div class="draft-order__description"></div>').appendTo(obj);
 		var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(desc);
 		var variantTitle = $('<div>'+$variantTitle+'</div>').appendTo(title);
 		var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(desc);
-		var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(inputs);
+		var qty = $('<div class="grid__item field inline--label"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(inputs);
 		var hiddenInput = $('<input type="hidden" value="'+$id+'" class="variant-id" name="variant_id[]">').appendTo(inputs);
 		if($specialInputs.length) {
 			var specialArray = [];
@@ -292,11 +456,50 @@ $(function() {
 			});
 			var specialString = $('<p>'+specialArray.join(' / ')+'</p>').appendTo(title);
 		}
-		var remove = $('<a class="draft-order__remove" href="#">Remove</a>').appendTo(desc);
+		var remove = $('<a class="draft-order__remove" href="#">&times;</a>').appendTo(desc);
 		$(obj).fadeIn();
 		showHide();
 	});
 
+	$(document).on('click','.btn--download-csv',function(e) {
+		e.preventDefault();
+		// var draftOrderName = $('#gotoDraftOrder .btn').data('name')
+		// $(this).attr('download','order-'+draftOrderName+'.csv');
+		var csv = 'data:text/csv;charset=utf-8,Reference,Style,Room,Location,Qty,Type,W,H,Description,Construction,Glass,Swing,Extended Price,Base Price,SQ FT\n';
+		var extendedTotal = 0;
+		var baseTotal = 0;
+		var squareFootageTotal = 0;
+		$('.draft-order__custom-product').each(function(i,v) {
+			// Loop through and add all the stuff
+			var $this = $(this);
+			var isLastProduct = i == $('.draft-order__custom-product').length - 1;
+			$.each(customFormElements,function(c,v) {
+				var slug = slugify(v);
+				var isLastElement = c == customFormElements.length - 1;
+				// $this.data(slug)
+				if($this.data(slug)) {
+					csv += '"'+$this.data(slug)+'"';
+				} 
+				// if($)
+				// extendedTotal +=
+				csv += ",";
+			});
+
+			$this.data('square-footage') ? csv += $this.data('square-footage') : '';
+			if(isLastProduct) {
+				
+			} else {
+				csv += "\n";
+			}
+			// Totals
+			$this.data('extended-price') ? extendedTotal +=  parseFloat($this.data('extended-price')) : '';
+			$this.data('base-price') ? baseTotal += parseFloat($this.data('base-price')) : '';
+			$this.data('square-footage') ? squareFootageTotal += parseFloat($this.data('square-footage')) : squareFootageTotal;
+		});
+		csv += '\n,,,,,,,,,,,,'+extendedTotal+','+baseTotal+','+squareFootageTotal;
+		var encodedUri = encodeURI(csv);
+		window.open(encodedUri);
+	});
 	$('#clear-results').on('click',function(e) {
 		e.preventDefault();
 		$('.product-list__hidden').empty();
@@ -305,15 +508,22 @@ $(function() {
 
 	$(document).on('click','.draft-order__remove',function(e) {
 		e.preventDefault();
-		$(this).closest('.draft-order__saved-product').fadeOut('fast',function() {
-			$(this).remove();
+		var myItem = $(this).closest('.draft-order__item');
+		myItem.fadeOut('fast',function() {
+			myItem.remove();
+			showHide();
 		});
-		showHide();
+		
 	});
 	//$('#createDraftOrder').append(preloader);
 
 
 	// $(document).on('click','')
+
+	$(document).on('click','.main-nav a',function() {
+		console.log('do the thing');
+		$('.main-preloader').show();
+	});
 	
 	$('#create-draft-order').submit(function(e) {
 		var createDraftOrderBtn = '#createDraftOrder';
@@ -325,6 +535,52 @@ $(function() {
 			}
 		};
 		// var obj = [];
+		$('.draft-order__custom-product').each(function(index,value) {
+			var $this = $(this),
+				customTitle = $this.find('.draft-order__title h5').text(),
+				customVariantTitle = $this.find('.draft-order__variant').text(),
+				customQty = $this.find('.variant-quantity').val(),
+				customColor = $this.data('color'),
+				customSize = $this.data('size'),
+				customJamb = $this.data('jamb'),
+				customGlass = $this.data('glass'),
+				customWeight = $this.data('weight'),
+				customBasePrice = parseInt($this.data('base-price')),
+				customExtendedPrice = parseInt($this.data('extended-price')),
+				customPrice = customBasePrice + customExtendedPrice;
+
+
+
+
+			var randomSku =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+			var $lineItem = {
+				"custom": true,
+				"quantity": parseInt(customQty),
+				"title": customTitle,
+				"price": customPrice,
+				"variant_title": customVariantTitle,
+				"variant_id":null,
+				"taxable": true,
+				"requires_shipping":true,
+				"properties": []
+			}
+
+			var $lineItems = obj.draft_order.line_items;
+			$lineItems.push($lineItem);
+
+			var props = $lineItem.properties;
+			$.each(customFormElements,function(i,v) {
+				var slug = slugify(v);
+				if($this.data(slug) != '') {
+					var properties = {
+						"name":v,
+						"value":$this.data(slug)
+					}
+					props.push(properties);
+				}
+			});
+		});
 		var totalSaved =  $('.draft-order__saved-product').length;
 		$('.draft-order__saved-product').each(function(index,value) {
 			if (index === totalSaved - 1) {
@@ -368,17 +624,19 @@ $(function() {
 				};
 				props.push(properties);
 			}
-
-			if($('#current-customer .user-list__user-info').length) {
-				var customerId = $('#current-customer').data('customer-id');
-				var customerNode = {
-					"id": customerId
-				}
-				obj.draft_order.customer = customerNode;
-				obj.draft_order.use_customer_default_address = true;
-			}
 		});
-		//console.log(obj);
+		if($('#current-customer .user-list__user-info').length) {
+			var customerId = $('#current-customer').data('customer-id');
+			var customerNode = {
+				"id": customerId
+			}
+			obj.draft_order.customer = customerNode;
+			obj.draft_order.use_customer_default_address = true;
+		}
+		if($('#salesperson').val()){
+			obj.draft_order.tags = "Salesperson:"+$('#salesperson').val();
+		}
+		console.log(obj);
 		$.ajaxSetup({
 			headers: {
 				'X-CSRF-TOKEN': $('input[name="_token"]').val()
@@ -396,9 +654,11 @@ $(function() {
 				console.log('successfully sent!');
 				$(createDraftOrderBtn).hide();
 				$(createDraftOrderBtn).find('svg').hide();
+				console.log(data);
 				var myId = data.body.draft_order.id;
 				var myHref = $('#gotoDraftOrder a').attr('href') + myId;
-				$('#gotoDraftOrder').show().find('a').attr('href',myHref);
+				$('#gotoDraftOrder').show().find('a').attr('href',myHref).attr('data-name',data.body.draft_order.name);
+				$('.btn--download-csv').attr('download','order-'+data.body.draft_order.name+'.csv').fadeIn();
 			},
 			error: function(data){
 				console.log('errr, nope');
@@ -411,10 +671,32 @@ $(function() {
 		e.preventDefault();
 		$('.draft-order__saved-products').empty();
 		$('.product-list__hidden').empty();
+		$('.custom-product__build').hide();
 		removeCustomer();
 		$('#add-product').val('').focus();
 		// $(this).closest('.draft-order__saved-product').remove();
 		showHide();
+	});
+
+	$(document).on('click','.add-custom-product',function(e) {
+		e.preventDefault();
+		$('.custom-product__build').fadeIn();
+	});
+
+	$(document).on('click','.custom--cancel',function(e) {
+		e.preventDefault();
+		$('.custom-product__build').fadeOut();
+	});
+
+	$(document).on('click','.calculate--square-footage',function(e) {
+		e.preventDefault();
+		var w = parseInt($('#custom-width').val()) / 12;
+		var h = parseInt($('#custom-height').val() / 12);
+		if(w > 0 && h > 0) {
+			var squareFootage = w * h;
+			//$(this).hide();
+			$('.custom--square-footage').html(squareFootage + ' ft&#178;').fadeIn();
+		} 
 	});
 
 	$('#addCustomerForm').submit(function(e) {
@@ -433,28 +715,33 @@ $(function() {
 			$.ajax({
 				url: APP_DOMAIN + '/customer/'+keyword,
 				success: function(d) {
-					// console.log(d);
+					console.log(d);
 					$(customerResults).empty();
-					$(d).each(function(i,p) {
-						// console.log(p.node.displayName);
-						var $name = p.node.displayName,
-							$id = p.node.id.replace('gid://shopify/Customer/','')
-							$email = p.node.email,
-							$gravatar = p.node.hash;
-
-						var obj = $('<div class="user-list__user-wrapper"></div>').appendTo(customerResults);
-						var btn = $('<button data-customer-id="'+$id+'" class="user-list__user"></button>').appendTo(obj);
-						var flexwrapper = $('<div class="relative flex flex--align-center"></div>').appendTo(btn);
-						var imagewrapper = $('<div class="user-list__user-image"><img width="40" src="'+$gravatar+'"></div>').appendTo(flexwrapper);
-						var datawrapper = $('<div data-customer-id="'+$id+'" class="user-list__user-info"></div>').appendTo(flexwrapper);
-						var name = $('<div class="user-list__name">'+$name+'</div>').appendTo(datawrapper);
-						var email = $('<div class="user-list__name">'+$email+'</div>').appendTo(datawrapper);
+					if(d.length) {
+						$('.customer--no-results').fadeOut();
+						$(d).each(function(i,p) {
+							// console.log(p);
+							var $name = p.node.displayName,
+								$id = p.node.id.replace('gid://shopify/Customer/','')
+								$email = p.node.email,
+								$gravatar = p.node.hash;
+							var obj = $('<div class="user-list__user-wrapper"></div>').appendTo(customerResults);
+							var btn = $('<button data-customer-id="'+$id+'" class="user-list__user"></button>').appendTo(obj);
+							var flexwrapper = $('<div class="relative flex flex--align-center"></div>').appendTo(btn);
+							var imagewrapper = $('<div class="user-list__user-image"><img width="40" src="'+$gravatar+'"></div>').appendTo(flexwrapper);
+							var datawrapper = $('<div data-customer-id="'+$id+'" class="user-list__user-info"></div>').appendTo(flexwrapper);
+							var name = $('<div class="user-list__name">'+$name+'</div>').appendTo(datawrapper);
+							var email = $('<div class="user-list__name">'+$email+'</div>').appendTo(datawrapper);
+							// var defaultAddress
+							$(spinner).fadeOut();
+						});
+						$(customerResults).fadeIn();
+						CURRENT_QUERY = '';
+						showHide();
+					} else {
 						$(spinner).fadeOut();
-					});
-					$(customerResults).fadeIn();
-					CURRENT_QUERY = '';
-
-					showHide();
+						$('.customer--no-results').fadeIn();
+					}
 				},
 				error: function(e) {
 					console.log(e);
@@ -485,6 +772,18 @@ $(function() {
 		$('#addCustomerForm').show().find('input').val('').focus();
 	}
 	showHide();
+
+	$(document).on('click','.send-invoice',function(e) {
+		e.preventDefault();
+		var id = $(this).attr('href');
+		console.log(id);
+		return false;
+		/*
+		$.post('/draft-order/'+id+'/send-invoice',function(data) {
+			console.log(data);
+		});
+		*/
+	});
 });
 
 

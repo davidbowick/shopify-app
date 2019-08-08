@@ -60,6 +60,10 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'auth.shop' => \OhMyBrew\ShopifyApp\Middleware\AuthShop::class,
+        'auth.webhook' => \OhMyBrew\ShopifyApp\Middleware\AuthWebhook::class,
+        'auth.proxy' => \OhMyBrew\ShopifyApp\Middleware\AuthProxy::class,
+        'billable' => \OhMyBrew\ShopifyApp\Middleware\Billable::class,
     ];
 
     /**
