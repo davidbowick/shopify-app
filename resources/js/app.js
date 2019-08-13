@@ -378,6 +378,7 @@ $(function() {
 				val = $('#custom-'+slug).val();
 			if(val) {
 				$(obj).attr('data-'+slug,val);
+				if(v != "Extended Price " && v != "Base Price");
 				$properties.push(val);
 				if(v === 'Glass' || v === 'Swing') {
 					$info.push(val);
@@ -548,7 +549,7 @@ $(function() {
 				customWeight = $this.data('weight'),
 				customBasePrice = parseInt($this.data('base-price')),
 				customExtendedPrice = parseInt($this.data('extended-price')),
-				customPrice = customBasePrice + customExtendedPrice;
+				customPrice = customExtendedPrice;
 
 
 
@@ -573,7 +574,7 @@ $(function() {
 			var props = $lineItem.properties;
 			$.each(customFormElements,function(i,v) {
 				var slug = slugify(v);
-				if($this.data(slug) != '') {
+				if($this.data(slug) != '' && v != 'Extended Price' && v != 'Base Price') {
 					var properties = {
 						"name":v,
 						"value":$this.data(slug)
@@ -671,10 +672,15 @@ $(function() {
 	$(document).on('click','.btn--start-over',function(e) {
 		e.preventDefault();
 		$('.draft-order__saved-products').empty();
+		$('#gotoDraftOrder').hide();
+		$('#createDraftOrder').html('Create Draft Order').show();
+
 		$('.product-list__hidden').empty();
 		$('.custom-product__build').hide();
 		removeCustomer();
 		$('#add-product').val('').focus();
+		$('#custom-width,#custom-height,#custom-extended-price,#custom-swing').val('');
+		$('.custom--square-footage').html('&nbsp;');
 		// $(this).closest('.draft-order__saved-product').remove();
 		showHide();
 	});
