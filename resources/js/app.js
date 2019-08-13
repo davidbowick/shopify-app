@@ -277,8 +277,9 @@ $(function() {
 		var keyword = $(this).val();
 		if($('#custom-height').val() && $('#custom-width').val()) {
 			$('.calculate--square-footage').trigger('click');
+
 		}
-	}));
+	},250));
 
 	var customFormElements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Extended Price','Base Price'];
 
@@ -695,8 +696,10 @@ $(function() {
 		var h = parseInt($('#custom-height').val() / 12);
 		if(w > 0 && h > 0) {
 			var squareFootage = w * h;
+			squareFootage = Math.round(squareFootage * 100) / 100;
 			//$(this).hide();
 			$('.custom--square-footage').html(squareFootage + ' ft&#178;').fadeIn();
+			$('#custom-extended-price').val(squareFootage*170).blur();
 		} 
 	});
 

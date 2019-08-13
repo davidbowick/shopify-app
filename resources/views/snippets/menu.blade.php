@@ -8,12 +8,14 @@
 				<a class="{{ $current_url == '/' ? 'active' : '' }}" href="/"><span>My Sales</span></a>
 			</li>
 			<li>
-				<a class="{{ $current_url == '/drafts' ? 'active' : '' }}" href="/drafts"><span>My Draft Orders</span></a>
+				<a class="{{ $current_url == '/drafts' ? 'active' : '' }}" href="/drafts"><span>My Drafts</span></a>
+			</li>
+			<li>
+				<a target="_blank" href="https://{{$shop->shopify_domain}}/admin/draft_orders/"><span>All Drafts</span></a>
 			</li>
 			<li>
 				<a class="{{ $current_url == '/new' ? 'active' : '' }}" href="/new"><span>New Draft Order</span></a>
 			</li>
-
 		</ul>
 		@if (Auth::user())
 		<div class="logged-in-user flex flex--align-center">
