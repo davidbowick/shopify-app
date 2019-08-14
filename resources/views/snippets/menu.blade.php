@@ -18,7 +18,7 @@
 			</li>
 		</ul>
 		@if (Auth::user())
-		<div class="logged-in-user flex flex--align-center">
+		<div class="logged-in-user flex flex--align-center small--hide">
 			<div class="logged-in-user__inner">
 				<img src="//www.gravatar.com/avatar/{{ md5( strtolower( trim( Auth::user()->email ) ) ) }}?s=30">
 				<span>{{ explode(' ',Auth::user()->name)[0] }}</span>

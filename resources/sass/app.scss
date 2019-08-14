@@ -258,6 +258,10 @@ select {
 				display: block;
 				height: 100%;
 				line-height: 48px;
+				@include mq(small) {
+				line-height: normal;
+				}
+				
 				border-top: .3rem solid transparent;
 				border-bottom: .3rem solid transparent;
 			}
@@ -671,6 +675,9 @@ input.error {
 }
 
 @media screen and (max-width: 600px) {
+	.small--hide {
+		display: none;
+	}
 	.small--flex-wrap {
 		@include flex-wrap(wrap);
 	}

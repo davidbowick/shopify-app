@@ -39,7 +39,7 @@ class ShopifyController extends Controller
             return redirect('/admin/login');
         }
         $graphQL = '{
-            orders(first:250, query:"status:any fulfillment_status:any tag:\'Salesperson:'.Auth::user()->name.'\'") {
+            orders(first:250, query:"status:any fulfillment_status:any tag:\'Salesperson:'.Auth::user()->name.'\'" , reverse: true) {
                 edges {
                     node {
                         id,

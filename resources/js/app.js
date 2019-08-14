@@ -351,12 +351,11 @@ $(function() {
 
 		$this.text('Adding...');
 
-
 		var w = $('#custom-width').val(); 
 		var h = $('#custom-height').val();
 		var qty = parseInt($('#custom-qty').val());
 		var size = w+'˝x'+h+'˝';
-		var squareFootage = $('.custom--square-footage').text().split(' ')[0];
+		var squareFootage = $('.custom--square-footage').text();
 		$properties.push(size);
 
 		var basePrice = $('#custom-base-price').val();
@@ -387,8 +386,8 @@ $(function() {
 			console.log(slug,val);
 		});
 
-		w ? obj.attr('data-width',w) : '';
-		h ? obj.attr('data-height',h) : '';
+		w ? obj.attr('data-width',w+'˝') : '';
+		h ? obj.attr('data-height',h+'˝') : '';
 		squareFootage ? obj.attr('data-square-footage',squareFootage) : '';
 
 
@@ -547,12 +546,10 @@ $(function() {
 				customJamb = $this.data('jamb'),
 				customGlass = $this.data('glass'),
 				customWeight = $this.data('weight'),
+				customSquareFootage = $this.data('square-footage'),
 				customBasePrice = parseInt($this.data('base-price')),
 				customExtendedPrice = parseInt($this.data('extended-price')),
 				customPrice = customExtendedPrice;
-
-
-
 
 			var randomSku =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -574,7 +571,7 @@ $(function() {
 			var props = $lineItem.properties;
 			$.each(customFormElements,function(i,v) {
 				var slug = slugify(v);
-				if($this.data(slug) != '' && v != 'Extended Price' && v != 'Base Price') {
+				if($this.data(slug) != '' && v != 'Extended Price' && v != 'Base Price' && v != 'Qty') {
 					var properties = {
 						"name":v,
 						"value":$this.data(slug)
@@ -582,6 +579,11 @@ $(function() {
 					props.push(properties);
 				}
 			});
+			var squareFootage = {
+				"name":"Sq. Ft",
+				"value":customSquareFootage
+			}
+			props.push(squareFootage);
 		});
 		var totalSaved =  $('.draft-order__saved-product').length;
 		$('.draft-order__saved-product').each(function(index,value) {

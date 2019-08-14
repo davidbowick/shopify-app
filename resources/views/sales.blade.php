@@ -20,7 +20,7 @@
     }
     @endphp
     <div class="flex flex--justify-space-between flex--align-center">
-    	<h1 class="">My Sales <small class="grey">(last 60 days)</small> </h1>
+    	<h1 class="">My Sales</h1>
     	<h1 class="my-total-sales">{{ $formatter->formatCurrency($total, 'USD') }}</h1>
     </div>
     <hr class="hr--invisible">
