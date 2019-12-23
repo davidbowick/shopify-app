@@ -103,45 +103,117 @@ class ShopifyController extends Controller
         $drafts = $drafts->body->draftOrders->edges;
         return view('drafts',compact('shop','salesteam','user','drafts'));
     }
+    public function draft($id) {
+        $shop = ShopifyApp::shop();
+        if(!$shop) {
+            return redirect('/login');
+        }
+        $salesteam = User::all();
+        $user =  Auth::user() ? Auth::user() : false;
+        if(!$user) {
+            return redirect('/admin/login');
+        }
+        $graphQL = '{
+            draftOrders(first:250, query:"tag:\'Salesperson:'.Auth::user()->name.'\'", reverse: true) {
+                edges {
+                    node {
+                        id,
+                        name,
+                        createdAt,
+                        totalPrice,
+                        tags,
+                        status,
+                        customer {
+                            displayName,
+                            email,
+                            id
+                        }
+                    }
+                }
+            }
+        }';
+        $drafts = $shop->api()->graph($graphQL);
+        // dd($drafts);
+        $drafts = $drafts->body->draftOrders->edges;
+        return view('drafts',compact('shop','salesteam','user','drafts'));
+    }
     public function searchProducts($title) {
     	$shop = ShopifyApp::shop();
         if(!$shop) {
             return redirect('/login');
         }
-    	// $request_url = '/admin/products.json?title='.$title;
+    	$request_url = '/admin/products.json?title='.$title;
     	$graphQL = '{
     		shop {
-				products(query:"title:*'.$title.'*" first: 5) {
+				products(query:"title:*\''.$title.'\'*" first: 250) {
 					edges {
 						node {
 							id
 							title
 							handle
 							featuredImage {
-								id
-								originalSrc
 								transformedSrc(maxWidth: 100)
 							}
-							variants(first: 100) {
-								edges {
-									node {
-										id
-										title
-									}
-								}
-							}
-                            options {
-                                name
-                            }
 						}
 					}
 				}
 			}
     	}';
-       
+        
         $products = $shop->api()->graph($graphQL);
+
+        // dd($products);
+        // dd($title);
+        // $result = $shop->api()->rest('GET',$request_url);
+        // dd($result);
+        // $result = $shop->api()->rest('POST','/admin/api/2019-04/draft_orders.json',$json);
         $products = $products->body->shop->products->edges;
-    	return $products;
+    	// return $products;
+        // dd($products);
+        return view('search',compact('products','shop'));
+    }
+    public function singleProduct($id) {
+        $shop = ShopifyApp::shop();
+        if(!$shop) {
+            return redirect('/login');
+        }
+        gid://shopify/Product/1671460388973
+        $graphQL = '{
+            product(id: "gid://shopify/Product/'.$id.'") {
+                title
+                featuredImage {
+                    transformedSrc(maxWidth: 100)
+                }
+                variants(first: 100) {
+                  edges {
+                      node {
+                          id
+                          title
+                      }
+                  }
+                }
+                options {
+                   name
+                }
+            }           
+        }';
+        
+        $query = $shop->api()->graph($graphQL);
+
+        // dd($products);
+        // dd($title);
+        // $result = $shop->api()->rest('GET',$request_url);
+        // dd($result);
+        // $result = $shop->api()->rest('POST','/admin/api/2019-04/draft_orders.json',$json);
+        // dd($product);
+        // dd($product);
+        $product = $query->body->product;
+        // dd($product);
+        // $variants = $product->body->product->variants;
+        // $options = $product->body->product->options;
+        // return $products;
+        // dd($products);
+        return view('singleproduct',compact('product','shop'));
     }
     //products(query:"title:*'.$title.'*" first: 5) {
     public function searchUsers($query) {;

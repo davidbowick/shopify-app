@@ -1,13 +1,31 @@
+(function($) {
+$.fn.donetyping = function(callback){
+    var _this = $(this);
+    var x_timer;    
+    _this.keyup(function (){
+        clearTimeout(x_timer);
+        x_timer = setTimeout(clear_timer, 500);
+    }); 
+
+    function clear_timer(){
+        clearTimeout(x_timer);
+        callback.call(_this);
+    }
+}
+})(jQuery);
+
 var $special = 'Special Order';
 var DEV_MODE = false;
 var preloader = $('<svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" ng-attr-r="{{config.radius}}" ng-attr-stroke-dasharray="{{config.dasharray}}" stroke="#ffffff" stroke-width="10" r="25" stroke-dasharray="117.80972450961724 41.269908169872416" transform="rotate(41.2639 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>');
-var DEBOUNCE_TIME = 500;
+var DEBOUNCE_TIME = 1000;
 var APP_DOMAIN = 'https://'+window.location.hostname;
 
 String.prototype.replaceAll = function(search,replacement) {
 	var target = this;
 	return target.replace(new RegExp(search,'g'), replacement);
 }
+
+
 
 function slugify(str) {
     str = str.replace(/^\s+|\s+$/g, '').toLowerCase(); // trim
@@ -183,82 +201,100 @@ $(function() {
 	$(FIELD).focus();
 	/* Find Products */
 
-	$(FIELD).keyup(debounce(function(){
-		var keyword = $(this).val();
+	// $(FIELD).keyup(debounce(function(){
+		$(FIELD).donetyping(function(callback){
+        //your code goes here.
+// });
+		var keyword = $(this).val().replace(/ /g, '+');
+		console.log(keyword);
 		if (keyword.length >= MIN_LENGTH && CURRENT_QUERY != keyword) {
-			CURRENT_QUERY = keyword;
 			$('.main-preloader').fadeIn();
+			CURRENT_QUERY = keyword;
+			var hideSpecialOrder = $('#hide-special-order:checked').length ? true : false;
+			console.log(hideSpecialOrder);
+			
 			$.ajax({
 				url: APP_DOMAIN + '/products/'+keyword,
 				success: function(d) {
 					$('.product-list__hidden').empty();
 					if(d.length) {
-						$('.no-results').hide();
-						$(d).each(function(i,p) {
-						// console.log(d.options);
-						var $title = p.node.title,
-						id = p.node.id,
-						handle = p.node.handle,
-							// options = d.node.options,
-							imageSrc = p.node.featuredImage.transformedSrc;
-
-							var obj = $('<div class="product-list__product flex"></div>');
-							var image = $('<div class="product-list__image"><img src="'+imageSrc+'" width="90" /></div>').appendTo(obj);
-							var details = $('<div class="product-list__details"></div></div>').appendTo(obj);
-							var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(details);
-							var select = $('<select class="variant-list__variants" style="display: none;"></select>').appendTo(details);
-							var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(details);
-						// var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(details);
-						// console.log(d.node.options);
-						$(p.node.options).each(function(i,o){
-							var optionName = o.name;
-							var optionHandle = optionName.toLowerCase().replace(' ','-');
-							var optionWrapper = $('<div class="regular__input grid__item field"></div>').appendTo(inputs);
-							var optionLabel = $('<label>'+o.name+'</label>').appendTo(optionWrapper);
-							var optionSelect = $('<select class="option-'+i+'" name="'+optionHandle+'"></select').appendTo(optionWrapper);
-						});
-						
-						if($title.indexOf($special) > -1) {
-							addSpecialInputs(inputs);
+						// var obj = $('<div class="product-list__product"></div>').appendTo('.product-list__hidden');
+						$(d).find('.product-list__product').appendTo($('.product-list__hidden'));	
+						if(hideSpecialOrder) {
+							$('.product-list__product.special-order').hide();
 						}
-						// var ul = $('<ul class="variant-list__variant"></ul>').appendTo(details);
-						$('.product-list__hidden').append(obj);
-						var option0 = [];
-						var option1 = [];
-						var option2 = [];
-
-						$(p.node.variants.edges).each(function(i,v) {
-							// console.log(v);
-							var vTitle = v.node.title,
-							vId = v.node.id;
-							$(select).append('<option data-image="'+imageSrc+'" data-product-title="'+$title+'" data-variant-title="'+vTitle.replaceAll('"','˝')+'" data-variant-id="'+vId+'" value="'+vId+'">'+vTitle+'</option>');	
-							var titleSplit = vTitle.split(' / ');
-							$(titleSplit).each(function(i,vo) {
-								// var voValue = vo.replaceAll('"','˝');
-								if(i == 0 && option0.indexOf(vo) === -1) {
-									obj.find('.option-0').append('<option value="'+vo+'">'+vo+'</option>');
-									option0.push(vo);
-								}
-								if(i == 1 && option1.indexOf(vo) === -1) {
-									obj.find('.option-1').append('<option value="'+vo+'">'+vo+'</option>');
-									option1.push(vo);
-								}
-								if(i == 2 && option2.indexOf(vo) === -1) {
-									obj.find('.option-2').append('<option value="'+vo+'">'+vo+'</option>');
-									option2.push(vo);
-								}
-							});
-						});
-						$(select).wrap('<div class="field"/>');
-						var addBtn = $('<a href="#" class="product-list__add btn">Add</a>').appendTo(details);
+					
+						showHide();
 						$('.main-preloader').fadeOut();
-					});
-					// If Size is selected, then enable/disable the other values.
-					$('.regular__input select').on('change',function() {
-						checkSelects($(this));
-					});
-					$('.option-0').trigger('change');
-					showHide();
+						// console.log(d);
+						$('.no-results').hide();
+					// 	$(d).each(function(i,p) {
+					// 	// console.log(d.options);
+					// 	var $title = p.node.title,
+					// 	id = p.node.id,
+					// 	handle = p.node.handle,
+					// 		// options = d.node.options,
+					// 	imageSrc = p.node.featuredImage.transformedSrc;
+					// 	// if($title.includes(keyword)) {
+
+					// 		var obj = $('<div class="product-list__product flex"></div>');
+					// 		var image = $('<div class="product-list__image"><img src="'+imageSrc+'" width="90" /></div>').appendTo(obj);
+					// 		var details = $('<div class="product-list__details"></div></div>').appendTo(obj);
+					// 		var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(details);
+					// 		var select = $('<select class="variant-list__variants" style="display: none;"></select>').appendTo(details);
+					// 		var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(details);
+					// 	// var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(details);
+					// 	// console.log(d.node.options);
+					// 	$(p.node.options).each(function(i,o){
+					// 		var optionName = o.name;
+					// 		var optionHandle = optionName.toLowerCase().replace(' ','-');
+					// 		var optionWrapper = $('<div class="regular__input grid__item field"></div>').appendTo(inputs);
+					// 		var optionLabel = $('<label>'+o.name+'</label>').appendTo(optionWrapper);
+					// 		var optionSelect = $('<select class="option-'+i+'" name="'+optionHandle+'"></select').appendTo(optionWrapper);
+					// 	});
+						
+					// 	if($title.indexOf($special) > -1) {
+					// 		addSpecialInputs(inputs);
+					// 	}
+					// 	// var ul = $('<ul class="variant-list__variant"></ul>').appendTo(details);
+					// 	$('.product-list__hidden').append(obj);
+					// 	var option0 = [];
+					// 	var option1 = [];
+					// 	var option2 = [];
+
+					// 	/*$(p.node.variants.edges).each(function(i,v) {
+					// 		// console.log(v);
+					// 		var vTitle = v.node.title,
+					// 		vId = v.node.id;
+					// 		$(select).append('<option data-image="'+imageSrc+'" data-product-title="'+$title+'" data-variant-title="'+vTitle.replaceAll('"','˝')+'" data-variant-id="'+vId+'" value="'+vId+'">'+vTitle+'</option>');	
+					// 		var titleSplit = vTitle.split(' / ');
+					// 		$(titleSplit).each(function(i,vo) {
+					// 			// var voValue = vo.replaceAll('"','˝');
+					// 			if(i == 0 && option0.indexOf(vo) === -1) {
+					// 				obj.find('.option-0').append('<option value="'+vo+'">'+vo+'</option>');
+					// 				option0.push(vo);
+					// 			}
+					// 			if(i == 1 && option1.indexOf(vo) === -1) {
+					// 				obj.find('.option-1').append('<option value="'+vo+'">'+vo+'</option>');
+					// 				option1.push(vo);
+					// 			}
+					// 			if(i == 2 && option2.indexOf(vo) === -1) {
+					// 				obj.find('.option-2').append('<option value="'+vo+'">'+vo+'</option>');
+					// 				option2.push(vo);
+					// 			}
+					// 		});
+					// 	});
+					// 	$(select).wrap('<div class="field"/>');
+					// 	var addBtn = $('<a href="#" class="product-list__add btn">Add</a>').appendTo(details);
+					// 	$('.main-preloader').fadeOut();
+					// // }
+					// });
+					// // If Size is selected, then enable/disable the other values.
+					// $('.regular__input select').on('change',function() {
+					// 	checkSelects($(this));
+					// });
+					// $('.option-0').trigger('change');
+					// showHide();*/
 					} else {
 						$('.main-preloader').fadeOut();
 						$('.product-list__hidden').hide();
@@ -270,7 +306,8 @@ $(function() {
 				}
 			});
 		}
-	},DEBOUNCE_TIME));
+	// },DEBOUNCE_TIME));
+	});
 
 
 	$('#custom-height,#custom-width').keyup(debounce(function(){
@@ -281,7 +318,7 @@ $(function() {
 		}
 	},250));
 
-	var customFormElements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Extended Price','Base Price'];
+	var customFormElements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Color','Bore Holes','Top','Mounting','Roller Catch','Threshold','Jamb','Extended Price','Base Price'];
 
 	if(DEV_MODE) {
 		$(FIELD).val('beverly flat').keyup();	
@@ -332,6 +369,15 @@ $(function() {
 			$(this).addClass('error');
 		} else {
 			$(this).removeClass('error');
+		}
+	});
+
+	$('#custom-base-price').on('keyup',function() {
+		if( !$(this).val() ) {
+			$(this).addClass('error');
+		} else {
+			$(this).removeClass('error');
+			$('.calculate--square-footage').trigger('click');
 		}
 	});
 	
@@ -640,7 +686,7 @@ $(function() {
 		if($('#salesperson').val()){
 			obj.draft_order.tags = "Salesperson:"+$('#salesperson').val();
 		}
-		console.log(obj);
+		// console.log(obj);
 		$.ajaxSetup({
 			headers: {
 				'X-CSRF-TOKEN': $('input[name="_token"]').val()
@@ -658,7 +704,7 @@ $(function() {
 				console.log('successfully sent!');
 				$(createDraftOrderBtn).hide();
 				$(createDraftOrderBtn).find('svg').hide();
-				console.log(data);
+				// console.log(data);
 				var myId = data.body.draft_order.id;
 				var myHref = $('#gotoDraftOrder a').attr('href') + myId;
 				$('#gotoDraftOrder').show().find('a').attr('href',myHref).attr('data-name',data.body.draft_order.name);
@@ -707,7 +753,8 @@ $(function() {
 			squareFootage = Math.round(squareFootage * 100) / 100;
 			//$(this).hide();
 			$('.custom--square-footage').html(squareFootage + ' ft&#178;').fadeIn();
-			$('#custom-extended-price').val(squareFootage*170).blur();
+			var basePrice = parseInt($('#custom-base-price').val());
+			$('#custom-extended-price').val(squareFootage*basePrice).blur();
 		} 
 	});
 
@@ -727,7 +774,7 @@ $(function() {
 			$.ajax({
 				url: APP_DOMAIN + '/customer/'+keyword,
 				success: function(d) {
-					console.log(d);
+					// console.log(d);
 					$(customerResults).empty();
 					if(d.length) {
 						$('.customer--no-results').fadeOut();
@@ -802,3 +849,33 @@ $(function() {
 
 
 
+$(document).on('change','#hide-special-order',function() {
+	var hideSpecialOrder = $('#hide-special-order:checked').length ? true : false;
+	if(hideSpecialOrder) {
+		$('.product-list__product.special-order').hide();
+	} else {
+		$('.product-list__product.special-order').show();
+	}
+});
+
+$(document).on('click','.draft-order__product-link',function(e) {
+	var id = $(this).data('product-id').split('/Product/')[1];
+	var el = $(this).closest('.product-list__product');
+	var vars = el.find('.product-list__details');
+	console.log(id);
+	if(el.hasClass('has-data')) {
+		vars.slideToggle();
+	} else {
+		$.ajax({
+			url: APP_DOMAIN + '/product/'+id,
+			success: function(d) {
+				// console.log()
+				// console.log(d);
+				el.addClass('has-data');
+				vars.html($(d).find('.product-list__details').html()).fadeIn();
+
+			}
+		});
+	}
+	return false;
+});

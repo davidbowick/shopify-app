@@ -12,7 +12,7 @@
         @include('snippets.preloader')
         <div class="grid__item one-whole  ">
 
-            <h4>Search Products <a href="#" class="float-right add-custom-product"><small>Add Custom</small></a></h4>
+            <h4 class="flex flex--align-center">Search Products <span class="hide-special-order__wrapper"><input id="hide-special-order" type="checkbox" checked name="hide_special_order"><label for="hide-special-order">Hide Special Order?</label></span> <a href="#" class="float-right add-custom-product"><small>Add Custom</small></a></h4>
             <form id="add-product__form" action="/products" method="GET" autocomplete="off" class="box">
                 @csrf
                 <div class="field flex">
@@ -30,10 +30,16 @@
         function slugify($string){
             return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string), '-'));
         }
-        $custom_form_elements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Extended Price','Base Price'];
+        $custom_form_elements = ['Reference','Style','Room','Location','Description','Qty','Type','Width','Height','Construction','Glass','Swing','Color','Bore Holes','Top','Mounting','Roller Catch','Threshold','Jamb','Extended Price','Base Price'];
         $swing = ['TBD','LHI','LHO','RHI','RHO'];
         $glass = ['TBD','Low-e','Sandblast/Frost','Flemish','Rain','Aquatex','Rainbow','Ford Blue','Tea','Water Cube','Water Ripple'];
-        $type = ['D','W'];
+        $color = ['Oil Rubbed Bronze','Heavy Bronze','Silver Pewter','Black','Pewter','Custom'];
+        $boreHoles = ['TBD','Deadbolt','Single Bore Hole','Double Bore Hole'];
+        $top = ['TBD','Flat','Half Arch','Arch','Full Arch'];
+        $mounting = ['TBD','Tabs','Nailer Fin','Holes'];
+        $rollerCatch = ['TBD','Yes','No'];
+        $threshold = ['TBD','Yes','No'];
+        $type = ['Door','Window'];
         $dev = false;
         @endphp
         <div class="box">
@@ -41,17 +47,27 @@
                 @foreach ($custom_form_elements as $field)
                 <div class="field grid__item field__{{ slugify($field) }} {{ $field == 'Title' ? 'one-whole' : '' }} ">
                     <label for="custom-{{ slugify($field) }}">{{ $field }}</label>
-                    @if ($field =='Swing' or $field == 'Glass' or $field == 'Type')
+                    @if ($field =='Swing' or $field == 'Glass' or $field == 'Color' or $field == 'Type' or $field == 'Bore Holes' or $field == 'Top' or $field == 'Mounting' or $field == 'Roller Catch' or $field == 'Threshold')
                     @php
                     $myArr = $swing;
                     $myArr = ($field == 'Glass') ? $glass : $myArr;
                     $myArr = ($field == 'Type') ? $type : $myArr;
+                    $myArr = ($field == 'Color') ? $color : $myArr;
+                    $myArr = ($field == 'Bore Holes') ? $boreHoles : $myArr;
+                    $myArr = ($field == 'Top') ? $top : $myArr;
+                    $myArr = ($field == 'Mounting') ? $mounting : $myArr;
+                    $myArr = ($field == 'Roller Catch') ? $rollerCatch : $myArr;
+                    $myArr = ($field == 'Threshold') ? $threshold : $myArr;
                     @endphp
                     <select id="custom-{{ slugify($field) }}" name="custom-{{ slugify($field) }}">
                         @foreach ($myArr as $val)
                         <option value="{{ $val }}">{{ $val }}</option>
                         @endforeach
                     </select>
+                    @elseif($field == 'Description')
+                    <div class="relative">
+                        <textarea class="custom-product__option" id="custom-{{ slugify($field) }}" name="custom-{{ slugify($field) }}"></textarea>
+                    </div>
                     @else 
                     <div class="relative">
                         <input class="custom-product__option" type="text" id="custom-{{ slugify($field) }}" name="custom-{{ slugify($field) }}">

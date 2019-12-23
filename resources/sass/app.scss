@@ -511,11 +511,14 @@ input.error {
 .draft-order__description {
 	width: 100%;
 }
+.product-list__details {
+	margin-top: 1em;
+}
 .draft-order__description b {
 	margin-bottom: 1em;
 }
 .draft-order__title {
-	margin-bottom: 1em;
+	margin-bottom: 0;
 	h5 {
 		margin-bottom: 0;
 	}
@@ -768,4 +771,18 @@ input.error {
 	display: none;
 	margin-left: 10px;
 	font-size: 12px;
+}
+
+.hide-special-order__wrapper {
+	margin-left: 30px;
+	@include flexbox();
+	@include align-items(center);
+	label {
+		margin-left: 5px;
+		margin-bottom: 0;
+	}
+}
+.add-custom-product {
+	justify-self: flex-end;
+	margin-left: auto;
 }
