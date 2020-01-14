@@ -20,9 +20,9 @@ Route::get('/product/{id}','ShopifyController@singleProduct')->middleware(['auth
 Route::get('/customer/{query}','ShopifyController@searchUsers')->middleware(['auth.shop'])->name('home');
 // Route::get('/', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
 Route::get('/new', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
-Route::get('/', 'ShopifyController@sales')->middleware(['auth.shop','billable'])->name('home');
+Route::get('/', 'ShopifyController@sales')->middleware(['auth.shop','billable'])->middleware('auth')->name('home');
 Route::get('/drafts', 'ShopifyController@drafts')->middleware(['auth.shop','billable'])->name('home');
-Route::get('/drafts/{id}','ShopifyController@draft')->middleware(['auth.shop','billable'])->name('home');
+Route::get('/drafts/{id}','ShopifyController@showDraft')->middleware(['auth.shop','billable'])->name('home');
 Route::get('/drafts/{id}/edit','ShopifyController@draftEdit')->middleware(['auth.shop','billable'])->name('home');
 Route::get('/drafts/{id}/update','ShopifyController@draftUpdate')->middleware(['auth.shop','billable'])->name('home');
 // Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
@@ -34,20 +34,24 @@ Route::post('/draft-order/{id}/send-invoice','ShopifyController@sendInvoice')->m
 Route::post('/pull','GitController@pull');
 
 
-// Route::get('/login',function() {
-// 	return 'login';
-// });
+Route::get('/login',function() {
+	return 'login';
+});
 // Auth::routes()->middleware(['auth.shop','billable']);
 
 // Route::get('install');
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth.shop'], function () {
+Route::group(['prefix' => 'user', 'middleware' => 'auth.shop'], function () {
     Auth::routes();
-    // Route::post('/admin/enter', 'Auth\AuthController@login');
+    Route::post('/admin/enter', 'Auth\AuthController@login');
+
 });
 // Route::get('/login','\App\Http\Controllers\Auth\LoginController@login');
 
-// Route::get('/logout','\App\Http\Controllers\Auth\LoginController@logout');
+Route::get('/user/logout',function() {
+	Auth::logout();
+	return redirect('/user/login');
+})->middleware(['auth.shop']);
 
 
 Route::get('/home', 'HomeController@index')->name('home');

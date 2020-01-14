@@ -30,49 +30,27 @@
         function slugify($string){
             return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string), '-'));
         }
-        $custom_form_elements = ['Reference','Style','Room','Location','Description','Qty','Type','Width','Height','Construction','Glass','Swing','Color','Bore Holes','Top','Mounting','Roller Catch','Threshold','Jamb','Extended Price','Base Price'];
-        $swing = ['TBD','LHI','LHO','RHI','RHO'];
-        $glass = ['TBD','Low-e','Sandblast/Frost','Flemish','Rain','Aquatex','Rainbow','Ford Blue','Tea','Water Cube','Water Ripple'];
-        $color = ['Oil Rubbed Bronze','Heavy Bronze','Silver Pewter','Black','Pewter','Custom'];
-        $boreHoles = ['TBD','Deadbolt','Single Bore Hole','Double Bore Hole'];
-        $top = ['TBD','Flat','Half Arch','Arch','Full Arch'];
-        $mounting = ['TBD','Tabs','Nailer Fin','Holes'];
-        $rollerCatch = ['TBD','Yes','No'];
-        $threshold = ['TBD','Yes','No'];
-        $type = ['Door','Window'];
+
         $dev = false;
         @endphp
         <div class="box">
-            <div class="flex flex--wrap grid custom-product__grid {{ $dev ? 'dev' : '' }}">
-                @foreach ($custom_form_elements as $field)
-                <div class="field grid__item field__{{ slugify($field) }} {{ $field == 'Title' ? 'one-whole' : '' }} ">
-                    <label for="custom-{{ slugify($field) }}">{{ $field }}</label>
-                    @if ($field =='Swing' or $field == 'Glass' or $field == 'Color' or $field == 'Type' or $field == 'Bore Holes' or $field == 'Top' or $field == 'Mounting' or $field == 'Roller Catch' or $field == 'Threshold')
-                    @php
-                    $myArr = $swing;
-                    $myArr = ($field == 'Glass') ? $glass : $myArr;
-                    $myArr = ($field == 'Type') ? $type : $myArr;
-                    $myArr = ($field == 'Color') ? $color : $myArr;
-                    $myArr = ($field == 'Bore Holes') ? $boreHoles : $myArr;
-                    $myArr = ($field == 'Top') ? $top : $myArr;
-                    $myArr = ($field == 'Mounting') ? $mounting : $myArr;
-                    $myArr = ($field == 'Roller Catch') ? $rollerCatch : $myArr;
-                    $myArr = ($field == 'Threshold') ? $threshold : $myArr;
-                    @endphp
-                    <select id="custom-{{ slugify($field) }}" name="custom-{{ slugify($field) }}">
-                        @foreach ($myArr as $val)
-                        <option value="{{ $val }}">{{ $val }}</option>
-                        @endforeach
-                    </select>
-                    @elseif($field == 'Description')
+            <div class="flex flex--wrap custom-product__grid {{ $dev ? 'dev' : '' }}">
+                @foreach (config('global.custom_fields') as $field)
+                <div class="field grid__item field__{{ slugify($field['name']) }}">
+                    <label for="custom-{{ slugify($field['name']) }}">{{ $field['name'] }}</label>
                     <div class="relative">
-                        <textarea class="custom-product__option" id="custom-{{ slugify($field) }}" name="custom-{{ slugify($field) }}"></textarea>
+                        @if ($field['type'] == 'textarea')
+                        <textarea id="custom-{{ slugify($field['name']) }}" name="{{ slugify($field['name']) }}"></textarea>
+                        @elseif ($field['type'] == 'select')
+                        <select id="custom-{{ slugify($field['name']) }}" name="{{ slugify($field['name']) }}">
+                            @foreach ($field['options'] as $option)
+                            <option value="{{ $option }}">{{ $option }}</option>
+                            @endforeach
+                        </select>
+                        @else 
+                        <input id="custom-{{ slugify($field['name']) }}" name="{{ slugify($field['name']) }}" >
+                        @endif
                     </div>
-                    @else 
-                    <div class="relative">
-                        <input class="custom-product__option" type="text" id="custom-{{ slugify($field) }}" name="custom-{{ slugify($field) }}">
-                    </div>
-                    @endif
                 </div>
                 @endforeach
                 <div class="field grid__item field__sq-ft">
@@ -83,25 +61,20 @@
                     </div>
                 </div>
             </div>
-
-            <a class="custom--create-btn btn btn--primary" href="#">Add Custom Product</a>
-            &nbsp;<a href="#" class="custom--cancel">Cancel</a> <span class="sep">|</span>
-            <a href="#" class="custom--clear">Clear Fields</a>
+            <div class="buttons">
+                <a class="custom--create-btn btn btn--primary" href="#">Add Custom Product</a>
+                &nbsp;<a href="#" class="custom--cancel">Cancel</a> <span class="sep">|</span>
+                <a href="#" class="custom--clear">Clear Fields</a>
+            </div>
         </div>
     </div>
         </div>
         <div id="right-column" class="grid__item small--one-whole" >
-            {{-- <h4>Sales</h4>
-            <div class="box">
-                <select name="salesperson" id="salesperson">
-                    <option val="">Select Salesperson</option>
-                    @foreach ($salesteam as $salesperson)
-                    <option {{ (Auth::user()->name == $salesperson->name) ? 'selected="selected"' : '' }} val="{{ $salesperson->name }}">{{ $salesperson->name }}</option>
-                    @endforeach
-                </select> 
-            </div>--}}
             <input type="hidden" value="{{Auth::user()->name}}"  name="salesperson" id="salesperson">
-            <h4>Customer</h4>
+            <input type="hidden" value="{{Auth::user()->email}}" name="salesperson_email" id="salesperson-email">
+            <h4 class="flex flex--align-center">
+                Customer 
+            </h4>
             {{-- <a href="#" class="btn--add-customer">Add Customer?</a> --}}
             <form id="addCustomerForm" method="GET" action="/customer" class="box relative" autocomplete="off">
                 <div class="field relative">
@@ -119,6 +92,12 @@
             @csrf
             <div class="draft-order__saved-products box">
                 <h4>Products</h4>
+            </div>
+            <div class="hide-payment-options__input">
+                {{-- <span class="hide-special-order__wrapper"> --}}
+                    <input id="hide-payment-options" type="checkbox" name="hide_payment_options">
+                    <label for="hide-payment-options">Hide Payment Options?</label>
+                {{-- </span> --}}
             </div>
             <div class="text-center"><button id="createDraftOrder" type="submit" class="btn btn-primary">Create Draft Order</button></div>
             <div id="gotoDraftOrder" class="text-center" style="display: none">
@@ -146,6 +125,6 @@
         };
         var myTitleBar = TitleBar.create(app, titleBarOptions);
     </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="{{ mix('/js/app.js') }}"></script>
+  {{--   <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ mix('/js/app.js') }}"></script> --}}
     @endsection

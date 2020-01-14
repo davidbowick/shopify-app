@@ -42,7 +42,8 @@
 				$order_id = explode('/',$order->node->id);
 				$order_id_split = end($order_id);
 				@endphp
-				<a target="_blank" href="https://{{$shop->shopify_domain}}/admin/draft_orders/{{ $order_id_split }}">{{ $order->node->name }}</a>
+				<a target="_blank" data-id="{{$order->node->id}}" href="https://{{$shop->shopify_domain}}/admin/draft_orders/{{ $order_id_split }}">{{ $order->node->name }}</a>
+                {{-- <a href="/drafts/{{ $order_id_split }}">{{ $order->node->name }}</a> --}}
 			</div>
 			<div class="order__created-at even-column">
 				{{ date_format(new DateTime($order->node->createdAt),'Y-m-d') }}

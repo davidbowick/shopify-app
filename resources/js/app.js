@@ -66,6 +66,10 @@ function showHide() {
 	$(draftOrderProduct).length ? fadeIn(draftOrders) : fadeOut(draftOrders);
 	$(productListItem).length ? fadeIn(clearButton) : fadeOut(clearButton);
 	$(productListItem).length ? fadeIn(productList) : fadeOut(productList);
+	if($(productListItem).length) {
+	} else {
+		$('#add-product').val('');
+	} 
 }
 function fadeIn(obj) {
 	$(obj).fadeIn();
@@ -312,13 +316,13 @@ $(function() {
 
 	$('#custom-height,#custom-width').keyup(debounce(function(){
 		var keyword = $(this).val();
-		if($('#custom-height').val() && $('#custom-width').val()) {
+		if($('#custom-height').val() != '' && $('#custom-width').val() != '') {
 			$('.calculate--square-footage').trigger('click');
 
 		}
 	},250));
 
-	var customFormElements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Color','Bore Holes','Top','Mounting','Roller Catch','Threshold','Jamb','Extended Price','Base Price'];
+	var customFormElements = ['Reference','Style','Room','Location','Qty','Type','Width','Height','Description','Construction','Glass','Swing','Color','Bore Holes','Top','Mounting','Roller Catch','Threshold','Jamb','Sidelights','Transoms','Screen','Extended Price','Base Price'];
 
 	if(DEV_MODE) {
 		$(FIELD).val('beverly flat').keyup();	
@@ -685,6 +689,10 @@ $(function() {
 		}
 		if($('#salesperson').val()){
 			obj.draft_order.tags = "Salesperson:"+$('#salesperson').val();
+			obj.draft_order.tags += ",Salesperson_email:"+$('#salesperson-email').val();
+		}
+		if($('#hide-payment-options').is(':checked')) {
+			obj.draft_order.tags += ',no_payment_options';
 		}
 		// console.log(obj);
 		$.ajaxSetup({
@@ -843,39 +851,56 @@ $(function() {
 		});
 		*/
 	});
+	$(document).on('change','#hide-special-order',function() {
+		var hideSpecialOrder = $('#hide-special-order:checked').length ? true : false;
+		if(hideSpecialOrder) {
+			$('.product-list__product.special-order').hide();
+		} else {
+			$('.product-list__product.special-order').show();
+		}
+	});
+
+	$(document).on('click','.custom-product__edit-link',function(e) {
+		$(this).closest('.box').find('.product-list__details').slideToggle();
+		return false;
+	});
+	$(document).on('click','.draft-order__product-link',function(e) {
+		console.log('.draft-order__product-link');
+		var id = $(this).data('product-id').split('/Product/')[1];
+		var el = $(this).closest('.product-list__product');
+		// var txt = 'Add';
+		var txtChange = false;
+		if (typeof $(this).data('button-text') !== 'undefined') {
+			txtChange = $(this).data('button-text');
+			// var changeText = 
+		}
+
+		var vars = el.find('.product-list__details');
+		console.log(id);
+		if(el.hasClass('has-data')) {
+			vars.slideToggle();
+		} else {
+			$.ajax({
+				url: APP_DOMAIN + '/product/'+id,
+				success: function(d) {
+					// console.log()
+					// console.log(d);
+					el.addClass('has-data');
+					vars.html($(d).find('.product-list__details').html()).fadeIn();
+					if(txtChange) {
+						vars.find('.btn').text(txtChange).attr('href','/drafts/'+id+'/');
+					}
+				}
+			});
+		}
+		return false;
+	});
 });
 
 
 
 
 
-$(document).on('change','#hide-special-order',function() {
-	var hideSpecialOrder = $('#hide-special-order:checked').length ? true : false;
-	if(hideSpecialOrder) {
-		$('.product-list__product.special-order').hide();
-	} else {
-		$('.product-list__product.special-order').show();
-	}
-});
 
-$(document).on('click','.draft-order__product-link',function(e) {
-	var id = $(this).data('product-id').split('/Product/')[1];
-	var el = $(this).closest('.product-list__product');
-	var vars = el.find('.product-list__details');
-	console.log(id);
-	if(el.hasClass('has-data')) {
-		vars.slideToggle();
-	} else {
-		$.ajax({
-			url: APP_DOMAIN + '/product/'+id,
-			success: function(d) {
-				// console.log()
-				// console.log(d);
-				el.addClass('has-data');
-				vars.html($(d).find('.product-list__details').html()).fadeIn();
 
-			}
-		});
-	}
-	return false;
-});
+

@@ -103,7 +103,10 @@ class ShopifyController extends Controller
         $drafts = $drafts->body->draftOrders->edges;
         return view('drafts',compact('shop','salesteam','user','drafts'));
     }
-    public function draft($id) {
+    public function showDraft($id) {
+        // mutation {
+        // draftOrderUpdate(id: "", input: {lineItems: {quantity: 10, customAttributes: {key: "", value: ""}, variantId: ""}})
+        // }
         $shop = ShopifyApp::shop();
         if(!$shop) {
             return redirect('/login');
@@ -113,29 +116,43 @@ class ShopifyController extends Controller
         if(!$user) {
             return redirect('/admin/login');
         }
+        $gid = 'gid://shopify/DraftOrder/'.$id;
         $graphQL = '{
-            draftOrders(first:250, query:"tag:\'Salesperson:'.Auth::user()->name.'\'", reverse: true) {
-                edges {
-                    node {
-                        id,
-                        name,
-                        createdAt,
-                        totalPrice,
-                        tags,
-                        status,
-                        customer {
-                            displayName,
-                            email,
-                            id
-                        }
+          draftOrder(id: "'.$gid.'") {
+            lineItems(first: 100) {
+              edges {
+                node {
+                  customAttributes {
+                    key
+                    value
+                  }
+                  variant {
+                    id
+                    title
+                    displayName
+                    
+                  }
+                  product {
+                    id
+                    featuredImage {
+                      transformedSrc(maxWidth: 100, maxHeight: 100)
                     }
+                  }
+                  quantity
+                  title
+                  id
                 }
+              }
             }
+          }
         }';
-        $drafts = $shop->api()->graph($graphQL);
+        $query = $shop->api()->graph($graphQL);
         // dd($drafts);
-        $drafts = $drafts->body->draftOrders->edges;
-        return view('drafts',compact('shop','salesteam','user','drafts'));
+        $draftItems = $query->body->draftOrder->lineItems->edges;
+        $customFields = config('global.custom_fields');
+        // dd($customFields);
+        // dd($draft);
+        return view('draft',compact('shop','draftItems','id','customFields'));
     }
     public function searchProducts($title) {
     	$shop = ShopifyApp::shop();
@@ -189,6 +206,7 @@ class ShopifyController extends Controller
                       node {
                           id
                           title
+                          availableForSale
                       }
                   }
                 }
