@@ -37,12 +37,12 @@ Route::get('/drafts/{id}/update','ShopifyController@draftUpdate')->middleware(['
 // Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
 Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
 
-Route::get('/admin/login',function() {
-	return redirect('login');
-});
-Route::get('/draft-order',function() {
-	return redirect('/');
-});
+// Route::get('/admin/login',function() {
+// 	// return redirect('login');
+// });
+// Route::get('/draft-order',function() {
+// 	// return redirect('/');
+// });
 
 
 Route::post('/draft-order/{id}/send-invoice','ShopifyController@sendInvoice')->middleware(['auth.shop','auth']);
