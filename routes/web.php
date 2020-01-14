@@ -19,7 +19,7 @@
 // 	// Route::get('/','\App\Http\Controllers\Auth\LoginController@login');
 // });
 // Route::get('/home', 'ShopifyController@sales')->middleware('auth')->name('home');
-Route::get('/','ShopifyController@sales')->middleware('auth.shop')->name('sales');
+Route::get('/','ShopifyController@sales')->middleware('auth.shop','billable')->name('sales');
 
 #All Products
 Route::get('/products/{title}','ShopifyController@searchProducts')->middleware('auth.shop')->name('home');
@@ -36,6 +36,13 @@ Route::get('/drafts/{id}/edit','ShopifyController@draftEdit')->middleware(['auth
 Route::get('/drafts/{id}/update','ShopifyController@draftUpdate')->middleware(['auth.shop','billable'])->name('home');
 // Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
 Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
+
+Route::get('/admin/login',function() {
+	return redirect('login');
+});
+Route::get('/draft-order',function() {
+	return redirect('/');
+});
 
 
 Route::post('/draft-order/{id}/send-invoice','ShopifyController@sendInvoice')->middleware(['auth.shop','auth']);
