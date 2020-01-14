@@ -18,7 +18,7 @@
 	
 // 	// Route::get('/','\App\Http\Controllers\Auth\LoginController@login');
 // });
-Route::get('/', 'ShopifyController@sales')->middleware('auth.shop','auth')->name('home');
+Route::get('/', 'ShopifyController@sales')->middleware('auth.shop')->name('home');
 
 #All Products
 Route::get('/products/{title}','ShopifyController@searchProducts')->middleware('auth.shop','auth')->name('home');
