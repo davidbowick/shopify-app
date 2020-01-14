@@ -15,28 +15,31 @@
 
 
 Route::group(['middleware'=>'auth.shop'],function() {
-	#All Products
-	Route::get('/products/{title}','ShopifyController@searchProducts')->middleware(['auth.shop'])->name('home');
-	#Single Product
-	Route::get('/product/{id}','ShopifyController@singleProduct')->middleware(['auth.shop'])->name('home');
-	#Users
-	Route::get('/customer/{query}','ShopifyController@searchUsers')->middleware(['auth.shop'])->name('home');
-	// Route::get('/', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
-	Route::get('/new', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
+	
 	Route::get('/', 'ShopifyController@sales')->middleware(['auth.shop','billable'])->middleware('auth')->name('home');
 	// Route::get('/','\App\Http\Controllers\Auth\LoginController@login');
-	Route::get('/drafts', 'ShopifyController@drafts')->middleware(['auth.shop','billable'])->name('home');
-	Route::get('/drafts/{id}','ShopifyController@showDraft')->middleware(['auth.shop','billable'])->name('home');
-	Route::get('/drafts/{id}/edit','ShopifyController@draftEdit')->middleware(['auth.shop','billable'])->name('home');
-	Route::get('/drafts/{id}/update','ShopifyController@draftUpdate')->middleware(['auth.shop','billable'])->name('home');
-	// Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
-	Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
-
-	Route::post('/draft-order/{id}/send-invoice','ShopifyController@sendInvoice')->middleware(['auth.shop']);
-	// Route::get('/variants','ShopifyController@grabProductVariants')->middleware(['auth.shop'])->name('home');
-
-	Route::post('/pull','GitController@pull');
 });
+
+#All Products
+Route::get('/products/{title}','ShopifyController@searchProducts')->middleware(['auth.shop'])->name('home');
+#Single Product
+Route::get('/product/{id}','ShopifyController@singleProduct')->middleware(['auth.shop'])->name('home');
+#Users
+Route::get('/customer/{query}','ShopifyController@searchUsers')->middleware(['auth.shop'])->name('home');
+// Route::get('/', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
+Route::get('/new', 'ShopifyController@index')->middleware(['auth.shop','billable'])->name('home');
+
+Route::get('/drafts', 'ShopifyController@drafts')->middleware(['auth.shop','billable'])->name('home');
+Route::get('/drafts/{id}','ShopifyController@showDraft')->middleware(['auth.shop','billable'])->name('home');
+Route::get('/drafts/{id}/edit','ShopifyController@draftEdit')->middleware(['auth.shop','billable'])->name('home');
+Route::get('/drafts/{id}/update','ShopifyController@draftUpdate')->middleware(['auth.shop','billable'])->name('home');
+// Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
+Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
+
+Route::post('/draft-order/{id}/send-invoice','ShopifyController@sendInvoice')->middleware(['auth.shop']);
+// Route::get('/variants','ShopifyController@grabProductVariants')->middleware(['auth.shop'])->name('home');
+
+Route::post('/pull','GitController@pull');
 
 
 // Route::get('/login',function() {
