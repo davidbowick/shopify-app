@@ -49,7 +49,7 @@ Route::post('/pull','GitController@pull');
 
 // Route::get('install');
 
-Route::group(['prefix' => 'user','middleware'=>'auth.shop'], function () {
+Route::group(['prefix' => 'user'], function () {
     Auth::routes();
     // Route::post('/admin/enter', 'Auth\AuthController@login');
 });
