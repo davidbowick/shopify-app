@@ -15,8 +15,8 @@
 
 
 Route::group(['middleware'=>'auth.shop'],function() {
-	
-	Route::get('/', 'ShopifyController@sales')->middleware(['auth.shop','billable'])->middleware('auth')->name('home');
+
+	Route::get('/', 'ShopifyController@sales')->middleware('auth')->name('home');
 	// Route::get('/','\App\Http\Controllers\Auth\LoginController@login');
 });
 
@@ -55,10 +55,10 @@ Route::group(['prefix' => 'user'], function () {
 });
 // Route::get('/login','\App\Http\Controllers\Auth\LoginController@login');
 
-Route::get('/user/logout',function() {
-	Auth::logout();
-	return redirect('/user/login');
-})->middleware(['auth.shop']);
+// Route::get('/user/logout',function() {
+// 	Auth::logout();
+// 	return redirect('/user/login');
+// })->middleware(['auth.shop']);
 
 
 // Route::get('/home', 'HomeController@index')->name('home');
