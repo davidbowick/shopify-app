@@ -36,6 +36,7 @@ Route::get('/drafts/{id}/edit','ShopifyController@draftEdit')->middleware(['auth
 Route::get('/drafts/{id}/update','ShopifyController@draftUpdate')->middleware(['auth.shop','billable'])->name('home');
 // Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
 Route::post('/draft-order','ShopifyController@storeDraftOrder')->middleware(['auth.shop'])->name('home');
+Route::get('/draft-order','ShopifyController@sales')->middleware('auth.shop','billable')->name('sales');
 
 // Route::get('/admin/login',function() {
 // 	// return redirect('login');
