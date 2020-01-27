@@ -13,7 +13,10 @@
     @endphp
     <div class="flex flex--justify-space-between flex--align-center">
     	<h1 class="no-margin">My Draft Orders</h1>
-    	<a href="/new" class="btn btn-primary">Add New</a>
+        <div class="heading--buttons">
+            <small><a class="export--draft-orders" href="javascript:void(0);">Export</a></small>
+    	    <a href="/new" class="btn btn-primary">Add New</a>
+        </div>
     </div>
     <hr class="hr--invisible">
     <div class="box">

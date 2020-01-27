@@ -551,6 +551,46 @@ $(function() {
 		var encodedUri = encodeURI(csv);
 		window.open(encodedUri);
 	});
+	$(document).on('click','.export--draft-orders',function(e) {
+		e.preventDefault();
+		var csv = 'data:text/csv;charset=utf-8,Order,Date,Total\n';
+		$('.order-row').each(function(i,v) {
+			// Loop through and add all the stuff
+			var $this = $(this);
+			var isLastProduct = i == $('.order-row').length - 1;
+			csv += '"' + $this.find('.order__id').text().trim().replace('#','') + '"';
+			csv += ',';
+			csv += '"' + $this.find('.order__created-at').text().trim() + '"';
+			csv += ',';
+			csv += '"' + $this.find('.order__total').text().trim() + '"';
+			csv += '\n';
+
+		});
+		console.log(csv);
+		// return false;
+		var encodedUri = encodeURI(csv);
+		window.open(encodedUri);
+	});
+	$(document).on('click','.export--sales',function(e) {
+		e.preventDefault();
+		var csv = 'data:text/csv;charset=utf-8,Order,Date,Total\n';
+		$('.order-row').each(function(i,v) {
+			// Loop through and add all the stuff
+			var $this = $(this);
+			var isLastProduct = i == $('.order-row').length - 1;
+			csv += '"' + $this.find('.order__id').text().trim().replace('#','') + '",';
+			// csv += ',';
+			csv += '"' + $this.find('.order__created-at').text().trim() + '",';
+			// csv += ',';
+			csv += '"' + $this.find('.order__total').text().trim() + '"\n';
+			// csv += '\n';
+
+		});
+		console.log(csv);
+		// return false;
+		var encodedUri = encodeURI(csv);
+		window.open(encodedUri);
+	});
 	$('#clear-results').on('click',function(e) {
 		e.preventDefault();
 		$('.product-list__hidden').empty();

@@ -21,7 +21,11 @@
     @endphp
     <div class="flex flex--justify-space-between flex--align-center">
     	<h1 class="">My Sales</h1>
-    	<h1 class="my-total-sales">{{ $formatter->formatCurrency($total, 'USD') }}</h1>
+        <div class="heading--buttons flex flex--align-center">
+            <small><a class="export--draft-orders" href="javascript:void(0);">Export</a></small>
+            <h1 class="my-total-sales">{{ $formatter->formatCurrency($total, 'USD') }}</h1>
+        </div>
+    	
     </div>
     <hr class="hr--invisible">
     <div class="box">
@@ -82,6 +86,25 @@
 
     	</div>
     	@endforeach
+        @else 
+        @for ($i = 1; $i < 6; $i++)
+        <div class="order-row even-columns">
+            <div class="order__id even-column">
+                #D1234{{ $i }}
+            </div>
+            <div class="order__created-at even-column">
+                2020-01-0{{ $i }}
+            </div>
+            <div class="order__customer even-column">
+                Dummy Test Data
+            </div>
+            <div class="even-column"></div>
+            <div class="even-column"></div>
+            <div class="order__total even-column">
+                ${{ $i }}0,000
+            </div>
+        </div>
+        @endfor
         @endif
     </div>
 </div>
