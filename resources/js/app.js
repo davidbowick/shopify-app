@@ -729,7 +729,7 @@ $(function() {
 		}
 		if($('#salesperson').val()){
 			obj.draft_order.tags = "Salesperson:"+$('#salesperson').val();
-			obj.draft_order.tags += ",Salesperson_email:"+$('#salesperson-email').val();
+			obj.draft_order.tags += ",_email:"+$('#salesperson-email').val();
 		}
 		if($('#hide-payment-options').is(':checked')) {
 			obj.draft_order.tags += ',no_payment_options';
