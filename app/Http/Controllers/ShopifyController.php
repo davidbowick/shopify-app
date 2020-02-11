@@ -167,6 +167,7 @@ class ShopifyController extends Controller
 						node {
 							id
 							title
+                            totalInventory
 							handle
 							featuredImage {
 								transformedSrc(maxWidth: 100)
@@ -178,14 +179,7 @@ class ShopifyController extends Controller
     	}';
         
         $products = $shop->api()->graph($graphQL);
-
-        // dd($products);
-        // dd($title);
-        // $result = $shop->api()->rest('GET',$request_url);
-        // dd($result);
-        // $result = $shop->api()->rest('POST','/admin/api/2019-04/draft_orders.json',$json);
         $products = $products->body->shop->products->edges;
-    	// return $products;
         // dd($products);
         return view('search',compact('products','shop'));
     }
@@ -194,10 +188,11 @@ class ShopifyController extends Controller
         if(!$shop) {
             return redirect('/login');
         }
-        gid://shopify/Product/1671460388973
+        // gid://shopify/Product/1671460388973
         $graphQL = '{
             product(id: "gid://shopify/Product/'.$id.'") {
                 title
+                totalInventory
                 featuredImage {
                     transformedSrc(maxWidth: 100)
                 }
@@ -217,20 +212,7 @@ class ShopifyController extends Controller
         }';
         
         $query = $shop->api()->graph($graphQL);
-
-        // dd($products);
-        // dd($title);
-        // $result = $shop->api()->rest('GET',$request_url);
-        // dd($result);
-        // $result = $shop->api()->rest('POST','/admin/api/2019-04/draft_orders.json',$json);
-        // dd($product);
-        // dd($product);
         $product = $query->body->product;
-        // dd($product);
-        // $variants = $product->body->product->variants;
-        // $options = $product->body->product->options;
-        // return $products;
-        // dd($products);
         return view('singleproduct',compact('product','shop'));
     }
     //products(query:"title:*'.$title.'*" first: 5) {

@@ -205,10 +205,8 @@ $(function() {
 	$(FIELD).focus();
 	/* Find Products */
 
-	// $(FIELD).keyup(debounce(function(){
 		$(FIELD).donetyping(function(callback){
         //your code goes here.
-// });
 		var keyword = $(this).val().replace(/ /g, '+');
 		console.log(keyword);
 		if (keyword.length >= MIN_LENGTH && CURRENT_QUERY != keyword) {
@@ -227,78 +225,10 @@ $(function() {
 						if(hideSpecialOrder) {
 							$('.product-list__product.special-order').hide();
 						}
-					
 						showHide();
 						$('.main-preloader').fadeOut();
 						// console.log(d);
 						$('.no-results').hide();
-					// 	$(d).each(function(i,p) {
-					// 	// console.log(d.options);
-					// 	var $title = p.node.title,
-					// 	id = p.node.id,
-					// 	handle = p.node.handle,
-					// 		// options = d.node.options,
-					// 	imageSrc = p.node.featuredImage.transformedSrc;
-					// 	// if($title.includes(keyword)) {
-
-					// 		var obj = $('<div class="product-list__product flex"></div>');
-					// 		var image = $('<div class="product-list__image"><img src="'+imageSrc+'" width="90" /></div>').appendTo(obj);
-					// 		var details = $('<div class="product-list__details"></div></div>').appendTo(obj);
-					// 		var title = $('<div class="draft-order__title"><h5>'+$title+'</h5></div>').appendTo(details);
-					// 		var select = $('<select class="variant-list__variants" style="display: none;"></select>').appendTo(details);
-					// 		var inputs = $('<div class="flex flex--wrap grid--half-gutters"></div>').appendTo(details);
-					// 	// var qty = $('<div class="grid__item field"><label>Qty</label><input class="variant-quantity" name="quantity[]" type="number" value="1"></div>').appendTo(details);
-					// 	// console.log(d.node.options);
-					// 	$(p.node.options).each(function(i,o){
-					// 		var optionName = o.name;
-					// 		var optionHandle = optionName.toLowerCase().replace(' ','-');
-					// 		var optionWrapper = $('<div class="regular__input grid__item field"></div>').appendTo(inputs);
-					// 		var optionLabel = $('<label>'+o.name+'</label>').appendTo(optionWrapper);
-					// 		var optionSelect = $('<select class="option-'+i+'" name="'+optionHandle+'"></select').appendTo(optionWrapper);
-					// 	});
-						
-					// 	if($title.indexOf($special) > -1) {
-					// 		addSpecialInputs(inputs);
-					// 	}
-					// 	// var ul = $('<ul class="variant-list__variant"></ul>').appendTo(details);
-					// 	$('.product-list__hidden').append(obj);
-					// 	var option0 = [];
-					// 	var option1 = [];
-					// 	var option2 = [];
-
-					// 	/*$(p.node.variants.edges).each(function(i,v) {
-					// 		// console.log(v);
-					// 		var vTitle = v.node.title,
-					// 		vId = v.node.id;
-					// 		$(select).append('<option data-image="'+imageSrc+'" data-product-title="'+$title+'" data-variant-title="'+vTitle.replaceAll('"','˝')+'" data-variant-id="'+vId+'" value="'+vId+'">'+vTitle+'</option>');	
-					// 		var titleSplit = vTitle.split(' / ');
-					// 		$(titleSplit).each(function(i,vo) {
-					// 			// var voValue = vo.replaceAll('"','˝');
-					// 			if(i == 0 && option0.indexOf(vo) === -1) {
-					// 				obj.find('.option-0').append('<option value="'+vo+'">'+vo+'</option>');
-					// 				option0.push(vo);
-					// 			}
-					// 			if(i == 1 && option1.indexOf(vo) === -1) {
-					// 				obj.find('.option-1').append('<option value="'+vo+'">'+vo+'</option>');
-					// 				option1.push(vo);
-					// 			}
-					// 			if(i == 2 && option2.indexOf(vo) === -1) {
-					// 				obj.find('.option-2').append('<option value="'+vo+'">'+vo+'</option>');
-					// 				option2.push(vo);
-					// 			}
-					// 		});
-					// 	});
-					// 	$(select).wrap('<div class="field"/>');
-					// 	var addBtn = $('<a href="#" class="product-list__add btn">Add</a>').appendTo(details);
-					// 	$('.main-preloader').fadeOut();
-					// // }
-					// });
-					// // If Size is selected, then enable/disable the other values.
-					// $('.regular__input select').on('change',function() {
-					// 	checkSelects($(this));
-					// });
-					// $('.option-0').trigger('change');
-					// showHide();*/
 					} else {
 						$('.main-preloader').fadeOut();
 						$('.product-list__hidden').hide();
@@ -310,7 +240,6 @@ $(function() {
 				}
 			});
 		}
-	// },DEBOUNCE_TIME));
 	});
 
 
@@ -339,7 +268,7 @@ $(function() {
 		$('#custom-width').val(61);
 		$('#custom-height').val(81);
 		$('#custom-extended-price').val(3567.00);
-		$('#custom-base-price').val(170);
+		$('#custom-base-price').val(170.50);
 		$('#custom-weight').val(2000);
 		$('#custom-jamb').val('6˝');
 		$('#custom-glass').val('Low-e');
@@ -347,7 +276,7 @@ $(function() {
 		$('.calculate--square-footage').trigger('click');
 	}
 	$('#custom-qty').val(1);
-	$('#custom-base-price').val(170.00);
+	$('#custom-base-price').val(170.50);
 
 	$('#custom-base-price').addClass('money-input');
 	$('#custom-extended-price').addClass('money-input');
@@ -355,6 +284,8 @@ $(function() {
 	$(document).on('blur','.money-input',function() {
 		if($(this).val() == '') return;
 		var valToFixed = parseInt($(this).val()).toFixed(2);
+		var valToFixed = Number.parseFloat($(this).val()).toFixed(2);
+		console.log(valToFixed);
 		$(this).attr('data-price-value',$(this).val());
 
 		$(this).val(valToFixed);
@@ -801,7 +732,9 @@ $(function() {
 			squareFootage = Math.round(squareFootage * 100) / 100;
 			//$(this).hide();
 			$('.custom--square-footage').html(squareFootage + ' ft&#178;').fadeIn();
-			var basePrice = parseInt($('#custom-base-price').val());
+
+			// var basePrice = parseInt($('#custom-base-price').val());
+			var basePrice = Number.parseFloat($('#custom-base-price').val()).toFixed(2);
 			$('#custom-extended-price').val(squareFootage*basePrice).blur();
 		} 
 	});
