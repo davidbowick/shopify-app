@@ -334,7 +334,7 @@ $(function() {
 
 		var w = $('#custom-width').val(); 
 		var h = $('#custom-height').val();
-		var qty = parseInt($('#custom-qty').val());
+		var qty = parseInt($('#custom-quantity').val());
 		var size = w+'˝x'+h+'˝';
 		var squareFootage = $('.custom--square-footage').text();
 		$properties.push(size);
