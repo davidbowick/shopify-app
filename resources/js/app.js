@@ -275,7 +275,7 @@ $(function() {
 		$('#custom-color').val('Brushed Steel');
 		$('.calculate--square-footage').trigger('click');
 	}
-	$('#custom-qty').val(1);
+	$('#custom-quantity').val(1);
 	$('#custom-base-price').val(170.50);
 
 	$('#custom-base-price').addClass('money-input');
