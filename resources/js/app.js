@@ -226,10 +226,12 @@ $(function() {
 							$('.product-list__product.special-order').hide();
 						}
 						showHide();
+						CURRENT_QUERY = '';
 						$('.main-preloader').fadeOut();
 						// console.log(d);
 						$('.no-results').hide();
 					} else {
+						CURRENT_QUERY = '';
 						$('.main-preloader').fadeOut();
 						$('.product-list__hidden').hide();
 						$('.no-results').fadeIn();
@@ -725,11 +727,11 @@ $(function() {
 
 	$(document).on('click','.calculate--square-footage',function(e) {
 		e.preventDefault();
-		var w = parseInt($('#custom-width').val()) / 12;
-		var h = parseInt($('#custom-height').val() / 12);
+		var w = Number.parseFloat($('#custom-width').val() / 12);
+		var h = Number.parseFloat($('#custom-height').val() / 12);
 		if(w > 0 && h > 0) {
 			var squareFootage = w * h;
-			squareFootage = Math.round(squareFootage * 100) / 100;
+			// squareFootage = Math.round(squareFootage * 100) / 100;
 			//$(this).hide();
 			$('.custom--square-footage').html(squareFootage + ' ft&#178;').fadeIn();
 

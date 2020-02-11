@@ -8,8 +8,8 @@
 @include('snippets.menu')
 <div class="container relative">
 @foreach ($products as $product)
-@if($product->node->totalInventory > 0)	
-@if (strpos($product->node->title, 'Special') !== false)
+@if($product->node->tracksInventory == true and $product->node->totalInventory == 0)	
+@continue
 @endif
 <div class="product-list__product {{ strpos($product->node->title, 'Special') !== false ? 'special-order' : '' }}">
 	<div class="product-list__product__main flex flex--align-center">
@@ -22,6 +22,8 @@
 					{{ $product->node->title }}
 				</a>
 			</h5>
+			{{-- {{$product->node->tracksInventory}}
+			{{$product->node->totalInventory}} --}}
 		</div>
 	</div>
 	<div class="product-list__details" style="display:none;">
@@ -69,6 +71,5 @@
 		
 	</div>
 </div>
-@endif
 @endforeach
 @endsection

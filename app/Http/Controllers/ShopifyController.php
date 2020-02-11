@@ -168,6 +168,7 @@ class ShopifyController extends Controller
 							id
 							title
                             totalInventory
+                            tracksInventory
 							handle
 							featuredImage {
 								transformedSrc(maxWidth: 100)
