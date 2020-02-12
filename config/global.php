@@ -50,7 +50,7 @@ return [
 		[
 			'name' => 'Glass',
 			'type' => 'select',
-			'options' => ['TBD','Low-e','Sandblast/Frost','Flemish','Rain','Aquatex','Rainbow','Ford Blue','Tea','Water Cube','Water Ripple']
+			'options' => ['TBD','Low-e','Sandblast/Frost','Flemish','Rain','Aquatex','Rainbow','Ford Blue','Tea','Water Cube','Water Ripple','Clear - single pane']
 		],
 		[
 			'name' => 'Swing',
